@@ -43,7 +43,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'j^rq-8z4l+b0cf(h3&+vjbz(bq3(d_-)h@==3vf&pz4wvz%xoh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -190,7 +190,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/static/'
 
 STATICFILES_DIRS = [
-    '/home/' + LOCAL_USER + '/Datacube/data_cube_ui/static',
+    '/home/' + LOCAL_USER + '/Datacube/NE-GeoCloud/static',
 ]
 
 # CELERY STUFF
