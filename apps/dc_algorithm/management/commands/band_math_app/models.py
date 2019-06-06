@@ -62,7 +62,7 @@ class Query(BaseQuery):
     compositor = models.ForeignKey(Compositor)
 
     #TODO: add color scale here
-    color_scale_path = '/home/' + settings.LOCAL_USER + '/Datacube/data_cube_ui/utils/color_scales/default_color_scale'
+    color_scale_path = '/home/' + settings.LOCAL_USER + '/Datacube/NE-GeoCloud/utils/color_scales/default_color_scale'
     base_result_dir = '/datacube/ui_results/band_math_app'
 
     class Meta(BaseQuery.Meta):

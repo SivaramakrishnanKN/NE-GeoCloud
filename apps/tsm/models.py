@@ -84,19 +84,19 @@ class Query(BaseQuery):
 
     color_scales = {
         'wofs':
-        '/home/' + settings.LOCAL_USER + '/Datacube/data_cube_ui/utils/color_scales/water_percentage_binned',
+        '/home/' + settings.LOCAL_USER + '/Datacube/NE-GeoCloud/utils/color_scales/water_percentage_binned',
         'tsm':
-        '/home/' + settings.LOCAL_USER + '/Datacube/data_cube_ui/utils/color_scales/tsm_binned',
+        '/home/' + settings.LOCAL_USER + '/Datacube/NE-GeoCloud/utils/color_scales/tsm_binned',
         'normalized_data':
-        '/home/' + settings.LOCAL_USER + '/Datacube/data_cube_ui/utils/color_scales/tsm_binned',
+        '/home/' + settings.LOCAL_USER + '/Datacube/NE-GeoCloud/utils/color_scales/tsm_binned',
         'max':
-        '/home/' + settings.LOCAL_USER + '/Datacube/data_cube_ui/utils/color_scales/tsm_binned',
+        '/home/' + settings.LOCAL_USER + '/Datacube/NE-GeoCloud/utils/color_scales/tsm_binned',
         'min':
-        '/home/' + settings.LOCAL_USER + '/Datacube/data_cube_ui/utils/color_scales/tsm_binned',
+        '/home/' + settings.LOCAL_USER + '/Datacube/NE-GeoCloud/utils/color_scales/tsm_binned',
         'variability':
-        '/home/' + settings.LOCAL_USER + '/Datacube/data_cube_ui/utils/color_scales/tsm_binned',
+        '/home/' + settings.LOCAL_USER + '/Datacube/NE-GeoCloud/utils/color_scales/tsm_binned',
         'total_clean':
-        '/home/' + settings.LOCAL_USER + '/Datacube/data_cube_ui/utils/color_scales/clear_observations_binned'
+        '/home/' + settings.LOCAL_USER + '/Datacube/NE-GeoCloud/utils/color_scales/clear_observations_binned'
     }
 
     class Meta(BaseQuery.Meta):

@@ -53,6 +53,7 @@ urlpatterns = [
     url(r'^task_manager/', include('apps.task_manager.urls')),
     url(r'^data_cube_manager/', include('apps.data_cube_manager.urls')),
     url(r'^accounts/', include('apps.accounts.urls')),
+    url(r'^test_app_1/', include('apps.test_app_1.urls')),
     url(r'^', include('apps.pages.urls')),
 ] + static(
     settings.STATIC_URL, document_root=settings.STATIC_ROOT)
