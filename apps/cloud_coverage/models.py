@@ -61,7 +61,7 @@ class Query(BaseQuery):
 
     """
 
-    color_scale_path = '/home/' + settings.LOCAL_USER + '/Datacube/data_cube_ui/utils/color_scales/cloud_coverage'
+    color_scale_path = '/home/' + settings.LOCAL_USER + '/Datacube/NE-GeoCloud/utils/color_scales/cloud_coverage'
     base_result_dir = '/datacube/ui_results/cloud_coverage'
 
     class Meta(BaseQuery.Meta):
