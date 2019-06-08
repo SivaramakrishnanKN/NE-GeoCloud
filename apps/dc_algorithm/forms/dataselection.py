@@ -3,7 +3,7 @@ from django.forms.forms import NON_FIELD_ERRORS
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
-from . import models
+from apps.dc_algorithm import models
 
 
 class DataSelectionForm(forms.Form):
