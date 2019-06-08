@@ -30,13 +30,13 @@ import json
 from datetime import datetime, timedelta
 
 from apps.dc_algorithm.models import Satellite, Area, Application
-from apps.dc_algorithm.forms import DataSelectionForm
+from apps.dc_algorithm.forms import DataSelectionForm, VisualizationForm
 from .tasks import run
 
 from collections import OrderedDict
 
 from apps.dc_algorithm.views import (ToolView, SubmitNewRequest, GetTaskResult, SubmitNewSubsetRequest, CancelRequest,
-                                     UserHistory, ResultList, OutputList, RegionSelection, TaskDetails)
+                                     UserHistory, ResultList, OutputList, RegionSelection, TaskDetails, DataCubeVisualization, GetIngestedAreas)
 
 
 class RegionSelection(RegionSelection):
@@ -48,6 +48,15 @@ class RegionSelection(RegionSelection):
     See the dc_algorithm.views docstring for more information
     """
     tool_name = 'cloud_coverage'
+
+class TrialView(DataCubeVisualization):
+    """
+    Create a Visualizer which shows all ingested data
+    """
+class TrialIngest(GetIngestedAreas):
+    '''
+    Call the ingested areas function
+    '''
 
 
 class CloudCoverageTool(ToolView):

@@ -27,7 +27,7 @@ from django.forms.models import model_to_dict
 from django.views import View
 from django.apps import apps
 
-from .models import Application, Satellite, Area
+from apps.dc_algorithm.models import Application, Satellite, Area
 
 
 class ToolClass:
