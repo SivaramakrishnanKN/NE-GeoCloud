@@ -20,19 +20,14 @@
 # under the License.
 
 from django import forms
-from django.core.validators import RegexValidator, validate_comma_separated_integer_list, validate_slug
-from django.core import validators
 from django.db.models import Q
 
-import re
-import datetime
-
-from apps.dc_algorithm.utils import logical_xor
 from apps.data_cube_manager.models import DatasetType
 
 
 class VisualizationForm(forms.Form):
-    """Form meant to validate all metadata fields for an ingestion configuration file."""
+    """Form meant to validate all metadata fields for an ingestion
+        configuration file."""
 
     start_date = forms.DateField(
         label='Start Date',
@@ -60,7 +55,10 @@ class VisualizationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(VisualizationForm, self).__init__(*args, **kwargs)
         dataset_types = DatasetType.objects.using('agdc').filter(
-            Q(definition__has_keys=['managed']) & Q(definition__has_keys=['measurements']))
+            Q(definition__has_keys=['managed']) & Q(definition__has_keys=[
+                'measurements']))
 
-        choices = ["All", *sorted(set([dataset_type.metadata['platform']['code'] for dataset_type in dataset_types]))]
-        self.fields['platform'].choices = ((platform, platform) for platform in choices)
+        choices = ["All", *sorted(set([dataset_type.metadata['platform'][
+            'code'] for dataset_type in dataset_types]))]
+        self.fields['platform'].choices = ((platform, platform) for
+                                           platform in choices)

@@ -19,20 +19,13 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from django.conf.urls import url, include
+from django.conf.urls import url
 
 from . import views
 
 urlpatterns = [
-    url(r'^region_selection', views.RegionSelection.as_view(), name='region_selection'),
-    url(r'^submit$', views.SubmitNewRequest.as_view(), name='submit_new_request'),
-    url(r'^submit_pixel_drill_request$', views.SubmitPixelDrillRequest.as_view(), name='submit_pixel_drill_request'),
-    url(r'^submit_single$', views.SubmitNewSubsetRequest.as_view(), name='submit_new_single_request'),
-    url(r'^cancel$', views.CancelRequest.as_view(), name='cancel_request'),
-    url(r'^result$', views.GetTaskResult.as_view(), name='get_result'),
-    url(r'^task_details/(?P<uuid>[^/]+)', views.TaskDetails.as_view(), name='get_task_details'),
-    url(r'^(?P<area_id>[\w\-]+)/task_history$', views.UserHistory.as_view(), name='get_task_history'),
-    url(r'^(?P<area_id>[\w\-]+)/results_list$', views.ResultList.as_view(), name='get_results_list'),
-    url(r'^(?P<area_id>[\w\-]+)/output_list$', views.OutputList.as_view(), name='get_output_list'),
-    url(r'^(?P<area_id>[\w\-]+)/$', views.WaterDetectionTool.as_view(), name='water_detection')
+    url(r'region_selection', views.DataCubeVisualization.as_view(),
+        name='region_selection'),
+    url(r'get_ingested_data', views.GetIngestedData.as_view(),
+        name='get_ingested_data'),
 ]
