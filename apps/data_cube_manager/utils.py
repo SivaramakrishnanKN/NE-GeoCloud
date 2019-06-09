@@ -1,4 +1,4 @@
-from . import forms
+from apps.data_cube_manager import forms
 from collections import OrderedDict
 from functools import reduce
 import re
