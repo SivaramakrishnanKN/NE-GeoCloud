@@ -19,49 +19,36 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
-from django.core.files.base import ContentFile
-from django.template.loader import render_to_string
-from django.forms.models import model_to_dict
-from django.conf import settings
+from django.shortcuts import render
+from django.http import JsonResponse
 from django.views import View
-from django.db.models import Q
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-
-from urllib import parse
-from collections import OrderedDict
-import json
-import yaml
-import uuid
-import shutil
 
 from apps.data_cube_manager import models
-from apps.dc_algorithm import forms
-from apps.dc_algorithm import utils
-from apps.data_cube_manager import tasks
+from apps.data_cube_manager import forms
 
 
 class DataCubeVisualization(View):
     """Visualize ingested and indexed Data Cube regions using leaflet"""
 
     def get(self, request):
-        """Main end point for viewing datasets and their extents on a leaflet map"""
+        """Main end point for viewing datasets and their extents on a
+            leaflet map"""
 
         context = {'form': forms.VisualizationForm()}
         context['dataset_types'] = models.DatasetType.objects.using('agdc').filter(
             definition__has_keys=['measurements'])
-        return render(request, 'trial.html', context)
+        return render(request, 'data_cube_manager/visualization.html', context)
 
 
 class GetIngestedAreas(View):
-    """Get a dict containing details on the ingested areas, grouped by Platform"""
+    """Get a dict containing details on the ingested areas,
+        grouped by Platform"""
 
     def get(self, request):
         """Call a synchronous task to produce a dict containing ingestion details
 
-        Work performed in a synchrounous task so the execution is done on a worker rather than on
+        Work performed in a synchrounous task so the execution is done on a
+            worker rather than on
         the webserver. Gets a dict like:
             {Landsat_5: [{}, {}, {}],
             Landsat_7: [{}, {}, {}]}
