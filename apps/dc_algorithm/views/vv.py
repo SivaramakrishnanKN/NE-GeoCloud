@@ -44,6 +44,7 @@ class ToolClass:
     """
 
     tool_name = None
+    tool_inputs = 0
     task_model_name = None
 
     def _get_tool_name(self):
