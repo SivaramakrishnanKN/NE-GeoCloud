@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap3',
     'materialize',
+    'materializecssform'
 ]
 
 MIDDLEWARE_CLASSES = [

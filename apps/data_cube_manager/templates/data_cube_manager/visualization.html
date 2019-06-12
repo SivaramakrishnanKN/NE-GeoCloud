@@ -1,4 +1,4 @@
-{% extends "default.html" %}
+{% extends "default.html" %} {% load bootstrap3 %}
 <!--
     Copyright 2016 United States Government as represented by the Administrator
     of the National Aeronautics and Space Administration. All Rights Reserved.
@@ -398,11 +398,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid no_footer">
+<div class="container">
     <div class="row fullscreen-row">
-      <div class="col-lg-3 fullscreen-col seamless-col">
-        <div class="col-lg-12">
-          <h1 class="page-header">Ingested Data Cubes</h1>
+      <div class="col l3 fullscreen-col seamless-col">
+        <div class="col l12">
+          <h4 class="page-header">Ingested Data Cubes</h1>
           <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
           <p>Use the filtering options below to hide or show specific subsets of ingested data. Clicking a region on the map will
           populate the area below with additional information about the clicked regions.</p>
@@ -418,9 +418,9 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-9 fullscreen-col seamless-col map-col">
+      <div class="col l9 fullscreen-col seamless-col map-col">
         <div id="map-canvas" class="map">
-          <div id="map" class="map">
+          <div id="map" class="map" style="height: 80vh; width:100%">
           </div>
         </div>
       </div>
