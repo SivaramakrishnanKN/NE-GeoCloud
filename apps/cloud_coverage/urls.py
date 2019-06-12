@@ -28,8 +28,4 @@ urlpatterns = [
         name='region_selection'),
     url(r'get_ingested_data', views.GetIngestedData.as_view(),
         name='get_ingested_data'),
-    url(r'^trial', views.TrialView.as_view(),
-        name='trial_view'),
-    url(r'^trial_get_ingested_areas', views.TrialIngest.as_view(),
-        name='trial_ingest')
 ]

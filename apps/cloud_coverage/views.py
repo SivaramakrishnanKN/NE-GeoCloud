@@ -24,15 +24,6 @@ from apps.dc_algorithm.views import DataCubeVisualization, GetIngestedAreas
 
 class DataCubeVisualization(DataCubeVisualization):
 
-    pass
-
-
-class GetIngestedData(GetIngestedAreas):
-
-    pass
-
-
-class TrialView(DataCubeVisualization):
     """
     Create a Visualizer which shows all ingested data
     """
@@ -41,8 +32,6 @@ class TrialView(DataCubeVisualization):
     tool_satellites = {'Landsat_5', 'Landsat_7', 'GPM'}
 
 
-class TrialIngest(GetIngestedAreas):
-    '''
-    Call the ingested areas function
-    '''
+class GetIngestedData(GetIngestedAreas):
+
     pass

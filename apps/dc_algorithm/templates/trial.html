@@ -55,7 +55,7 @@
         	  	<p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
         		<p> Satellites
         			{% for satellite in tool_satellites %}
-			    	<li><a href="#!" class="blue-text"><i class="material-icons">view_module</i>satellite</a></li>
+			    	<li><a href="#!" class="blue-text"><i class="material-icons">view_module</i>{{ satellite }}</a></li>
 			    	{% endfor %}
 				</p>
         	
@@ -71,9 +71,6 @@
 								    	{% for satellite in tool_satellites %}
 				    						<option value="1" data-icon="/static/assets/icons/data_cube_icon.png">{{satellite}}</option>
 				    					{% endfor %}
-									    <option value="1" data-icon="/static/assets/icons/data_cube_icon.png">Landsat 5</option>
-									    <option value="2">Landsat 7</option>
-									    <option value="3">Landsat 8</option>
 								    </select>
 								    <label>Select Sources</label>
 								</div>
