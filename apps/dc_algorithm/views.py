@@ -30,14 +30,16 @@ from apps.data_cube_manager import forms
 class DataCubeVisualization(View):
     """Visualize ingested and indexed Data Cube regions using leaflet"""
 
+    tool_name = None
+
     def get(self, request):
         """Main end point for viewing datasets and their extents on a
             leaflet map"""
-
         context = {'form': forms.VisualizationForm()}
         context['dataset_types'] = models.DatasetType.objects.using('agdc').filter(
             definition__has_keys=['measurements'])
-        return render(request, 'data_cube_manager/visualization.html', context)
+        context['tool_name'] = self.tool_name
+        return render(request, 'dc_algorithm/visualization.html', context)
 
 
 class GetIngestedAreas(View):

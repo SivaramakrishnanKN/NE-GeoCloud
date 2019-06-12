@@ -24,7 +24,7 @@ from apps.dc_algorithm.views import DataCubeVisualization, GetIngestedAreas
 
 class DataCubeVisualization(DataCubeVisualization):
 
-    pass
+    current_url = 'Water Detection'
 
 
 class GetIngestedData(GetIngestedAreas):

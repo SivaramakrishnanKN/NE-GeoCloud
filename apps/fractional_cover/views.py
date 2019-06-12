@@ -24,7 +24,7 @@ from apps.dc_algorithm.views import DataCubeVisualization, GetIngestedAreas
 
 class DataCubeVisualization(DataCubeVisualization):
 
-    pass
+    tool_name = 'Fractional Cover'
 
 
 class GetIngestedData(GetIngestedAreas):
