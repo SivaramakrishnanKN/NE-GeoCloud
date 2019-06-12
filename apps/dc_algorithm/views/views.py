@@ -102,8 +102,6 @@ class ToolClass:
 class DataCubeVisualization(ToolClass, View):
     """Visualize ingested and indexed Data Cube regions using leaflet"""
 
-    tool_name = self._get_tool_name()
-
     def get(self, request):
         """Main end point for viewing datasets and their extents on a leaflet map"""
         context = {'form': forms.VisualizationForm(),

@@ -1,4 +1,5 @@
 {% extends "default.html" %}
+{% load bootstrap3 %}
 <!--
     Copyright 2016 United States Government as represented by the Administrator
     of the National Aeronautics and Space Administration. All Rights Reserved.
@@ -56,35 +57,14 @@
       osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
       });
-      info_osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        noWrap: true,
-        attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-      });
-
       map = new L.Map('map', {
         minZoom: 3,
         maxZoom: 6,
         zoomSnap: 0.25,
       });
-      info_map = new L.Map('info_map', {
-        zoomSnap: 0.25
-      });
 
       map.addLayer(osm);
-      info_map.addLayer(info_osm);
-      // Setting the map to be fully zoomed out and the max bounds to the corners of the Earth.
-      map.setView([0, 0], 3);
-      map.setMaxBounds([
-        [-60, -200],
-        [85, 200]
-      ]);
-
-      // Start the map in the popup focused on the 0,0 point with max bounds same as the main map.
-      info_map.setView([0, 0], 3);
-      info_map.setMaxBounds([
-        [-60, -180],
-        [85, 180]
-      ]);
+      
 
       load_ingested_areas();
       initialize_map_listeners();
@@ -400,8 +380,8 @@
 {% block content %}
 <div class="container-fluid no_footer">
     <div class="row fullscreen-row">
-      <div class="col-lg-3 fullscreen-col seamless-col">
-        <div class="col-lg-12">
+      <div class="col l3 fullscreen-col seamless-col">
+        <div class="col l12">
           <h1 class="page-header">Ingested Data Cubes</h1>
           <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
           <p>Use the filtering options below to hide or show specific subsets of ingested data. Clicking a region on the map will
@@ -418,7 +398,7 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-9 fullscreen-col seamless-col map-col">
+      <div class="col l9 fullscreen-col seamless-col map-col">
         <div id="map-canvas" class="map">
           <div id="map" class="map">
           </div>
