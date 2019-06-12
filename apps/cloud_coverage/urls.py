@@ -1,4 +1,4 @@
-# Copyright 2016 United States Government as represented by the Administrator
+# Copyright 2016 United States Governmhttp://www.cr7streams.club/?m=0#ent as represented by the Administrator
 # of the National Aeronautics and Space Administration. All Rights Reserved.
 #
 # Portion of this code is Copyright Geoscience Australia, Licensed under the
@@ -28,4 +28,8 @@ urlpatterns = [
         name='region_selection'),
     url(r'get_ingested_data', views.GetIngestedData.as_view(),
         name='get_ingested_data'),
+    url(r'^trial', views.TrialView.as_view(),
+        name='trial_view'),
+    url(r'^trial_get_ingested_areas', views.TrialIngest.as_view(),
+        name='trial_ingest')
 ]

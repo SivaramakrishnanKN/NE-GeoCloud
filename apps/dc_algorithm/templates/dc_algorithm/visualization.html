@@ -1,4 +1,4 @@
-{% extends "default.html" %}
+{% extends "default.html" %} {% load bootstrap3 %}
 <!--
     Copyright 2016 United States Government as represented by the Administrator
     of the National Aeronautics and Space Administration. All Rights Reserved.
@@ -283,7 +283,7 @@
       <a class="btn btn-default form-control" target="_blank" href="/data_cube_manager/dataset_types/view/` + ingestion_data[key][index]['dataset_type_ref'] + `">View Dataset Type</a>
     </div>
     <div class="form-group">
-      <a class="btn btn-default form-control" target="_blank" href="dataset_types/` + ingestion_data[key][index]['dataset_type_ref'] + `/datasets">View Datasets</a>
+      <a class="btn btn-default form-control" target="_blank" href="/data_cube-manager/dataset_types/` + ingestion_data[key][index]['dataset_type_ref'] + `/datasets">View Datasets</a>
     </div>
     <div class="form-group">
       <a class="btn btn-default form-control" target="_blank" href="{% url 'create_ingestion_subset' %}?` + query_string + `">Create a Sample Cube</a>
@@ -402,7 +402,7 @@
     <div class="row fullscreen-row">
       <div class="col-lg-3 fullscreen-col seamless-col">
         <div class="col-lg-12">
-          <h1 class="page-header">Ingested Data Cubes</h1>
+          <h1 class="page-header">{{tool_name}}</h1>
           <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
           <p>Use the filtering options below to hide or show specific subsets of ingested data. Clicking a region on the map will
           populate the area below with additional information about the clicked regions.</p>

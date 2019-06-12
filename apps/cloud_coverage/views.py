@@ -30,3 +30,19 @@ class DataCubeVisualization(DataCubeVisualization):
 class GetIngestedData(GetIngestedAreas):
 
     pass
+
+
+class TrialView(DataCubeVisualization):
+    """
+    Create a Visualizer which shows all ingested data
+    """
+    tool_name = 'Cloud Coverage'
+    tool_inputs = 3
+    tool_satellites = {'Landsat_5', 'Landsat_7', 'GPM'}
+
+
+class TrialIngest(GetIngestedAreas):
+    '''
+    Call the ingested areas function
+    '''
+    pass
