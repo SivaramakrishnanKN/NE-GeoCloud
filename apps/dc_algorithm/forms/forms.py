@@ -34,7 +34,7 @@ from apps.data_cube_manager.models import DatasetType
 class VisualizationForm(forms.Form):
     """Form meant to validate all metadata fields for an ingestion configuration file."""
 
-    start_date = forms.DateField(
+    start_date = forms.CharField(
         label='Start Date',
         error_messages={'required': 'Start date is required.'},
         widget=forms.DateInput(attrs={
@@ -58,9 +58,13 @@ class VisualizationForm(forms.Form):
                                    'onchange': "update_shown_cubes()"}))
 
     def __init__(self, *args, **kwargs):
+        satellites = kwargs.pop('satellites')
         super(VisualizationForm, self).__init__(*args, **kwargs)
+
         dataset_types = DatasetType.objects.using('agdc').filter(
             Q(definition__has_keys=['managed']) & Q(definition__has_keys=['measurements']))
 
-        choices = ["All", *sorted(set([dataset_type.metadata['platform']['code'] for dataset_type in dataset_types]))]
-        self.fields['platform'].choices = ((platform, platform) for platform in choices)
+        # The below line gets all dataset_types from the database which have measurement
+        #choices = ["All", *sorted(set([dataset_type.metadata['platform']['code'] for dataset_type in dataset_types]))]
+        self.fields['platform'].choices = ((satellite, satellite) for satellite in satellites)
+

@@ -89,7 +89,7 @@ class DataCubeVisualization(ToolClass, View):
     def get(self, request):
         """Main end point for viewing datasets and their extents on a leaflet map"""
         tool_name = self._get_tool_name()
-        context = {'form': forms.VisualizationForm(),
+        context = {'form': forms.VisualizationForm(satellites=self.tool_satellites),
                     'tool_name': self.tool_name,
                 }
         context['dataset_types'] = models.DatasetType.objects.using('agdc').filter(

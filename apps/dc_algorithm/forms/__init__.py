@@ -1,2 +1,2 @@
 from .dataselection import DataSelectionForm
-from .trial import VisualizationForm
+from .forms import VisualizationForm

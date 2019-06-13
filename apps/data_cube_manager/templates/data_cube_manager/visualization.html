@@ -45,10 +45,12 @@
 
   $(function() {
       $('.datepicker').datepicker({
-          changeMonth: true,
-          changeYear: true,
-          showButtonPanel: true,
-          yearRange: "-30:+0"
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        showClearBtn: true,
+        todayHighlight: true,
+        yearRange: [1970,2019]
       });
       $(".tooltipped").tooltip();
 

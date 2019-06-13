@@ -50,37 +50,20 @@
 {% block content %}
 <div class="container">
     <div class="row">
-      	<div class="col l3" style="overflow:auto; max-height: 89vh;">
+      	<div class="col l3" style="overflow:auto; max-height: 95vh;">
         	<div class="col l12">
 
           		<h4 class="page-header">{{tool_name}}</h1>
         	  	<p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
-        	  	<form action="">
+        	  	<form action="" method="POST">
+
 					<ul class="collapsible popout " >
 					{% for i in "x"|ljust:tool_inputs %}
+
 						<li>
 					      	<div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}} </div>
 					      	<div class="collapsible-body">
-					      		<div class="input-field col s12">
-								    <div class="col s12">
-									    <select multiple>
-									    	{% for satellite in tool_satellites %}
-					    						<option value="{{satellite}}">{{satellite}}</option>
-					    					{% endfor %}
-										    
-									    </select>
-									    <label>Select Sources</label>
-									</div>
-								    <div class="col s12">
-										<label>Start Date</label>
-								    	<input type="text" class="datepicker">
-								    </div>
-								    <div class="col s12">
-										<label>End Date</label>
-								    	<input type="text" class="datepicker">
-									</div>
-								</div>
-								<p>Select your satellites from the options above</p>							
+					      		{{ form.as_p }}						
 					      	</div>
 					    </li>
 					{% endfor %}			    
