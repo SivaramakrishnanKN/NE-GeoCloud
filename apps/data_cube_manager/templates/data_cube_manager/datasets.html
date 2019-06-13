@@ -31,20 +31,20 @@ under the License.
 {% endblock %}
 {% load bootstrap3 %}
 {% block content %}
-<div class="container-fluid no_footer">
+<div class="container">
   <div class="row fullscreen-row">
-    <div class="col-lg-12 seamless-col col-centered fullscreen-col table-container">
+    <div class="col l12 seamless-col col-centered fullscreen-col table-container">
       <div class="page-header">
         <h1>Datasets</h1>
         <div class="row">
-          <p class="col-lg-9 col-md-10 col-sm-11 col-xs-12">
+          <p class="col l9 m10 s11 xs12">
             Datasets are individual chunks of data - either full acquisitions (scenes) or chunks of acquisitions created during ingestion.
             Information found in the dataset is the id, added date, and acquisition/chunk data such as extents, date acquired, and path to dataset.
             The table found on this page contains the datasets that match the criteria specified by the datasets form.
           </p>
         </div>
       </div>
-      <div class="col-lg-4">
+      <div class="col l4">
         <form id="filtering_form" action="">
           {% csrf_token %}
           {% bootstrap_form form bound_css_class="" %}
@@ -55,7 +55,7 @@ under the License.
         <button id="subset_btn_disabled" style="display:none;" class="btn btn-disabled">Select a single product to create a subset</button>
         <a id="subset_btn" class="btn btn-default" href="{% url 'create_ingestion_subset' %}?">Create Data Cube request</a>
       </div>
-      <div id="table_container" class="col-lg-8">
+      <div id="table_container" class="col l8">
         <table id="data_table" class="table table-hover full" style="min-height: 600px;">
           <thead>
             <tr>

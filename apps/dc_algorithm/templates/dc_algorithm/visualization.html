@@ -1,0 +1,119 @@
+{% extends "default.html" %} {% load bootstrap3 %}
+<!--
+    Copyright 2016 United States Government as represented by the Administrator
+    of the National Aeronautics and Space Administration. All Rights Reserved.
+
+    Portion of this code is Copyright Geoscience Australia, Licensed under the
+    Apache License, Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a copy of the License
+    at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    The CEOS 2 platform is licensed under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0.
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+    License for the specific language governing permissions and limitations
+    under the License.
+  -->
+{% block css %}
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
+  <style>
+  #map{ 
+    width: 960px; 
+    height: 500px; 
+    }
+</style>{% endblock %}
+
+{% block javascript %}
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script>
+
+  $(document).ready(function(){
+    $('.collapsible').collapsible();
+  $('.dropdown-trigger').dropdown();
+  $('select').formSelect();
+  $('.datepicker').datepicker();
+  });
+
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col l3">
+          <div class="card col l12 scrollable">
+
+              <h4 class="page-header">{{tool_name}}</h1>
+              <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
+            <p> Satellites
+              {% for satellite in tool_satellites %}
+            <li><a href="#!" class="blue-text"><i class="material-icons">view_module</i>{{ satellite }}</a></li>
+            {% endfor %}
+        </p>
+          
+
+        <ul class="collapsible popout">
+        {% for i in "x"|ljust:tool_inputs %}
+          <li class="active">
+                <div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}} </div>
+                <div class="collapsible-body">
+                  <div class="input-field col s12">
+                  <div class="col s12">
+                    <select multiple>
+                      {% for satellite in tool_satellites %}
+                        <option value="1" data-icon="/static/assets/icons/data_cube_icon.png">{{satellite}}</option>
+                      {% endfor %}
+                    </select>
+                    <label>Select Sources</label>
+                </div>
+                  <div class="col s12">
+                  <label>Start Date</label>
+                    <input type="text" class="datepicker">
+                  </div>
+                  <div class="col s12">
+                  <label>End Date</label>
+                    <input type="text" class="datepicker">
+                </div>
+              </div>
+              <p>Select your satellites from the options above</p>              
+                </div>
+            </li>
+        {% endfor %}          
+        </ul>
+
+      </div>
+        </div>
+        
+      <div class="card col l9">
+          <div id="map"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var map = L.map('map',{scrollWheelZoom:false}).setView([25.6737, 91.9132], 15);
+
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+  
+    L.tileLayer.wms("http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", {
+      layers: 'nexrad-n0r-900913',
+      format: 'image/png',
+      transparent: true,
+    }).addTo(map);
+
+
+  var marker = L.marker([25.6737, 91.9132]).addTo(map);
+  
+</script>
+{% endblock %}
