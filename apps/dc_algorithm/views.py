@@ -60,7 +60,7 @@ class DataCubeVisualization(ToolClass, View):
         context['tool_name'] = self.tool_name
         context['tool_inputs'] = self.tool_inputs
         context['tool_satellites'] = self.tool_satellites
-        return render(request, 'dc_algorithm/visualization.html', context)
+        return render(request, 'trial.html', context)
 
 
 class GetIngestedAreas(View):

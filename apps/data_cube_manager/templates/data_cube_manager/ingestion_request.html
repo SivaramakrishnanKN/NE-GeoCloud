@@ -28,11 +28,11 @@
 {% block content %}
 <div class="container-fluid no_footer fullscreen-row">
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col l12">
       <div class="page-header">
         <h1>Create a Sample Data Cube</h1>
         <div class="row">
-          <p class="col-lg-9 col-md-10 col-sm-11 col-xs-12">
+          <p class="col l9 m10 s11 xs12">
             Create and download a sample Data Cube for small scale analysis cases.
             Enter a source product, bounding box, time range, and storage attributes to launch a custom ingestion on demand process to create your cube.
             Sample cubes are restricted to a data volume equivalent to one degree squares over one year.
@@ -44,26 +44,26 @@
     </div>
   </div>
   <div class="row" style="height:75%;">
-    <div class="col-lg-3 multicolumn_form" style="overflow-y:auto; height: 100%;">
+    <div class="col l3 multicolumn_form" style="overflow-y:auto; height: 100%;">
       <div class="page-header sub"><span class="form-section-header">Dataset Metadata:</span></div>
       <form id="metadata_form">
         {% bootstrap_form ingestion_request_form bound_css_class="" %}
         {% bootstrap_form storage_form bound_css_class="" %}
       </form>
     </div>
-    <div class="col-lg-2 multicolumn_form" style="overflow-y:auto; height: 100%;">
+    <div class="col l2 multicolumn_form" style="overflow-y:auto; height: 100%;">
       <div class="page-header sub"><span class="form-section-header">Measurements:</span></div>
       <div id="existing_measurement_container">
         {% include "data_cube_manager/existing_measurements.html" %}
       </div>
     </div>
-    <div class="col-lg-7 multicolumn_form" style="overflow-y:auto; height: 100%;">
+    <div class="col l7 multicolumn_form" style="overflow-y:auto; height: 100%;">
       <div class="page-header sub"><span class="form-section-header">Measurement:</span></div>
       <div id="measurement_container">
         <p>Select a measurement to the right to view and edit properties.</p>
       </div>
     </div>
-    <div class="col-lg-12" style="padding-top: 10px; padding-bottom: 5px;">
+    <div class="col l12" style="padding-top: 10px; padding-bottom: 5px;">
       <span class="pull-left">Your current parameter set will include <strong id="dataset_count">0</strong> acquisitions.</span>
       <button class="btn btn-danger pull-right bottom-btn" onclick="create_sample_cube()">Create Sample Cube</button>
     </div>

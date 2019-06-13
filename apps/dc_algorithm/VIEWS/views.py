@@ -28,6 +28,11 @@ from apps.data_cube_manager import models
 from apps.dc_algorithm import forms
 
 
+class Parameter:
+    parameter_name = None
+    parameter_lower = 0
+    parameter_higher = 80
+
 class ToolClass:
     """Base class for all Tool related classes
 
@@ -42,9 +47,10 @@ class ToolClass:
     """
 
     tool_name = None
-    tool_inputs = None
+    tool_inputs = 0
     task_model_name = None
     tool_satellites = None
+    tool_parameters = 0
 
     def _get_tool_name(self):
         """Get the tool_name property
@@ -64,40 +70,6 @@ class ToolClass:
         #     )
         return self.tool_name
 
-    def _get_task_model_name(self):
-        """Get the task_model_name property
-
-        The task model name must be usable for querying for a model with apps.get_model.
-        Meant to implement a general NotImplementedError for required properties
-
-        Raises:
-            NotImplementedError in the case of task_model_name not being defined
-
-        Returns:
-            The value of task_model_name.
-
-        """
-        if self.task_model_name is None:
-            raise NotImplementedError(
-                "You must specify a task_model_name in classes that inherit"
-                "ToolClass. See the ToolClass and dc_algorithm.models docstring"
-                "for more details."
-            )
-        return self.task_model_name
-
-    def _get_tool_model(self, model):
-        """Get a model from the subclassing tool
-
-        Used to get a model from the specific tool - e.g. if tool
-        'custom_mosaic_tool' subclasses this, you can get
-        custom_mosaic_tool.Query by calling self._get_tool_model('query')
-
-        Returns:
-            Model class requested by 'model'
-        """
-
-        return apps.get_model('.'.join([self._get_tool_name(), model]))
-
 
 class DataCubeVisualization(ToolClass, View):
     """Visualize ingested and indexed Data Cube regions using leaflet"""
@@ -110,7 +82,9 @@ class DataCubeVisualization(ToolClass, View):
         context['dataset_types'] = models.DatasetType.objects.using('agdc').filter(
             definition__has_keys=['measurements'])
         context['tool_inputs'] = self.tool_inputs
-        return render(request, 'trial.html', context)
+        context['tool_satellites'] = self.tool_satellites
+        context['tool_parameters'] = self.tool_parameters
+        return render(request, 'dc_algorithm/visualization.html', context)
 
 
 class GetIngestedAreas(View):

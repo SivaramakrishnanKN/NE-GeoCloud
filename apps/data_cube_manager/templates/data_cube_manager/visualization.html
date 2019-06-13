@@ -1,5 +1,4 @@
-{% extends "default.html" %}
-{% load bootstrap3 %}
+{% extends "default.html" %} {% load bootstrap3 %}
 <!--
     Copyright 2016 United States Government as represented by the Administrator
     of the National Aeronautics and Space Administration. All Rights Reserved.
@@ -30,41 +29,129 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
 <script src="/static/assets/js/leaflet/leaflet.js"></script>
 <script src="/static/assets/js/Leaflet.draw/leaflet.draw.js"></script>
 <script src="/static/assets/js/drawmap_leaflet.js"></script>
 
 <script>
 
+  $(document).ready(function(){
+    $('.collapsible').collapsible();
+  $('.dropdown-trigger').dropdown();
+  $('select').formSelect();
+  $('.scrollspy').scrollSpy();
+  });
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col l3" style="overflow:auto; max-height: 89vh;">
+          <div class="col l12">
+
+              <h4 class="page-header">{{tool_name}}</h1>
+              <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
+              <form action="">
+          <ul class="collapsible popout " >
+          {% for i in "x"|ljust:tool_inputs %}
+            <li>
+                  <div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}} </div>
+                  <div class="collapsible-body">
+                    <div class="input-field col s12">
+                    <div class="col s12">
+                      <select multiple>
+                        {% for satellite in tool_satellites %}
+                          <option value="{{satellite}}">{{satellite}}</option>
+                        {% endfor %}
+                        
+                      </select>
+                      <label>Select Sources</label>
+                  </div>
+                    <div class="col s12">
+                    <label>Start Date</label>
+                      <input type="text" class="datepicker">
+                    </div>
+                    <div class="col s12">
+                    <label>End Date</label>
+                      <input type="text" class="datepicker">
+                  </div>
+                </div>
+                <p>Select your satellites from the options above</p>              
+                  </div>
+              </li>
+          {% endfor %}          
+          </ul>
+          <div class="range-field">
+            <label for="hyperparameter_1">Hyperparameter 1</label>
+                <input type="range" id="hyperparameter_1" min="0" max="100">                
+            </div>
+          <div class="range-field">
+            <label for="hyperparameter_1">Hyperparameter 2</label>
+                <input type="range" id="hyperparameter_2" min="0" max="100">                
+            </div>
+          <div class="range-field">
+            <label for="hyperparameter_1">Hyperparameter 3</label>
+                <input type="range" id="hyperparameter_3" min="0" max="100">                
+            </div>
+
+        </form>
+
+      </div>
+        </div>
+        
+      <div class="col l9 fullscreen-col seamless-col map-col">
+        <div id="map-canvas" class="map">
+          <div id="map" style="height: 93vh; width:100%"></div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
   var map, info_map;
   var ingestedAreaLayerGroups = {};
   var layerIdDateRange = {};
-  var highlightDiv = '#C6D9F1';
+  var highlightDiv = '#ff0000';
   var unHighlightDiv = '#ffffff';
-  var highlightLayer = '#333A56';
-  var unHighlightLayer = '#52658F';
+  var highlightLayer = '#ff0000';
+  var unHighlightLayer = '#ff0000';
 
   $(function() {
       $('.datepicker').datepicker({
-          changeMonth: true,
-          changeYear: true,
-          showButtonPanel: true,
-          yearRange: "-30:+0"
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        showClearBtn: true,
+        todayHighlight: true,
+        yearRange: [1970,2019]
       });
       $(".tooltipped").tooltip();
 
       // Map related functionality - generate two leaflet maps, one for the modal and one for the main view.
-      osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+      osm = new L.TileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+
+  
       });
+
+      
       map = new L.Map('map', {
         minZoom: 3,
         maxZoom: 6,
         zoomSnap: 0.25,
       });
-
-      map.addLayer(osm);
       
+      map.addLayer(osm);
+    map.setView([0, 0], 3);
+      map.setMaxBounds([
+        [-60, -200],
+        [85, 200]
+      ]);
 
       load_ingested_areas();
       initialize_map_listeners();
@@ -375,74 +462,4 @@
   }
 
 </script>
-{% endblock %}
-
-{% block content %}
-<div class="container-fluid no_footer">
-    <div class="row fullscreen-row">
-      <div class="col l3 fullscreen-col seamless-col">
-        <div class="col l12">
-          <h1 class="page-header">Ingested Data Cubes</h1>
-          <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
-          <p>Use the filtering options below to hide or show specific subsets of ingested data. Clicking a region on the map will
-          populate the area below with additional information about the clicked regions.</p>
-          <p>Selecting one of these cards will create a pop up with specific details about the area and a link where a sample
-          cube can be created based on the area.</p>
-          <hr>
-          <form>
-            {% bootstrap_form form %}
-          </form>
-          <hr>
-          <div id="areaList">
-
-          </div>
-        </div>
-      </div>
-      <div class="col l9 fullscreen-col seamless-col map-col">
-        <div id="map-canvas" class="map">
-          <div id="map" class="map">
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="info_modal" class="modal fade" role="dialog">
-      <div class="modal-dialog modal-lg">
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Additional Information</h4>
-          </div>
-          <div class="modal-body" style="">
-            <div class="row" style="height: 40vh;">
-              <div id="info_table" class="col-sm-6">
-
-              </div>
-              <div id="info_map" class="col-sm-6" style="height:100%;"></div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="dialog_modal" class="modal fade" role="dialog">
-      <div class="modal-dialog modal-sm">
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title"></h4>
-          </div>
-          <div class="modal-body">
-            <p></p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-</div>
 {% endblock %}
