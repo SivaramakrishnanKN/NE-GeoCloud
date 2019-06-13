@@ -28,11 +28,11 @@
 {% block content %}
 <div class="container-fluid no_footer fullscreen-row">
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col l12">
       <div class="page-header">
         <h1>{% if dataset_type_id %}View Dataset Definition{% else %}Create a New Dataset Type{% endif %}</h1>
         <div class="row">
-          <p class="col-lg-9 col-md-10 col-sm-11 col-xs-12">
+          <p class="col l9 m10 s11">
             {% if dataset_type_id %}
             View the full definition of a dataset using the forms below. The left panel contains the dataset metadata and the center panel can be used to see individual measurement details. Select a measurement using the rightmost panel to view that measurement's definition. Use the bottom buttons to download a .yaml file for this dataset or create a new measurement using this as a base.
             {% else %}
@@ -43,13 +43,13 @@
     </div>
   </div>
   <div class="row" style="height:75%;">
-    <div class="col-lg-3 multicolumn_form" style="overflow-y:auto; height: 100%;">
+    <div class="col l3 multicolumn_form" style="overflow-y:auto; height: 100%;">
       <div class="page-header sub"><span class="form-section-header">Dataset Metadata:</span></div>
       <form id="metadata_form">
         {% bootstrap_form metadata_form bound_css_class="" %}
       </form>
     </div>
-    <div class="col-lg-2 multicolumn_form" style="overflow-y:auto; height: 100%;">
+    <div class="col l2 multicolumn_form" style="overflow-y:auto; height: 100%;">
       <div class="page-header sub"><span class="form-section-header">Measurements:</span></div>
       <table class="table table-hover" style="">
         <tbody id="measurements_table">
@@ -65,13 +65,13 @@
         <button class="btn btn-default pull-right" onclick="add_new_measurement()">Create new measurement</button>
       {% endif %}
     </div>
-    <div class="col-lg-7 multicolumn_form" style="overflow-y:auto; height: 100%;">
+    <div class="col l7 multicolumn_form" style="overflow-y:auto; height: 100%;">
       <div class="page-header sub"><span class="form-section-header">Measurement:</span></div>
       <div id="measurement_container">
         <p>Select a measurement to the right to view and edit properties.</p>
       </div>
     </div>
-    <div class="col-lg-12" style="padding-top: 10px; padding-bottom: 5px;">
+    <div class="col l12" style="padding-top: 10px; padding-bottom: 5px;">
       {% if dataset_type_id %}
         <a class="btn btn-default pull-right bottom-btn" href="{% url 'create_dataset_type_from_base' dataset_type_id=dataset_type_id %}">Create a derivative dataset</a>
       {% endif %}

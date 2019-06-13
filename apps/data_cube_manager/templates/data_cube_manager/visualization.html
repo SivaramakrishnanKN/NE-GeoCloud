@@ -56,6 +56,7 @@
       osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
       });
+
       info_osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         noWrap: true,
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
@@ -66,6 +67,7 @@
         maxZoom: 6,
         zoomSnap: 0.25,
       });
+
       info_map = new L.Map('info_map', {
         zoomSnap: 0.25
       });
@@ -253,11 +255,15 @@
     });
   }
 
+  $(document).ready(function(){
+    $('.modal').modal();
+  });
+
   // Display the modal equivalent with data for the DIV.
   function displayModal(id, key, index) {
     var query_string = jQuery.param(ingestion_data[key][index]);
     var additional_information = `
-    <dl class="dl-horizontal">
+    <dl>
       <dt style="text-align:left;">Satellite</dt>
       <dd>` + key.replace('_', ' ') + `</dd>
       <dt style="text-align:left;">Product</dt>
@@ -364,7 +370,7 @@
 
         // Dynamically generating the DIVs.
         var area_details_card = `
-        <div id="` + id + `" class="col-lg-12 seamless-col area_details_container" onclick="displayModal('` + id + `', '` + key + `', '` + i + `')">
+        <div id="` + id + `" class="col l12 seamless-col area_details_container" onclick="displayModal('` + id + `', '` + key + `', '` + i + `')">
           <span class="glyphicon glyphicon-remove pull-left" onclick="hide_area_card(event, ` + id + `)"></span>
           ` + ingestion_data[key][i].product + `
         </div>
@@ -400,8 +406,8 @@
 {% block content %}
 <div class="container">
     <div class="row fullscreen-row">
-      <div class="col l3 fullscreen-col seamless-col">
-        <div class="col l12">
+      <div class="card col l3 m10 offset-m1 fullscreen-col seamless-col" style="overflow:auto; max-height: 95vh;">
+        <div class="col l12"> 
           <h4 class="page-header">Ingested Data Cubes</h1>
           <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
           <p>Use the filtering options below to hide or show specific subsets of ingested data. Clicking a region on the map will
@@ -418,16 +424,15 @@
           </div>
         </div>
       </div>
-      <div class="col l9 fullscreen-col seamless-col map-col">
+      <div class="col l9 s12">
         <div id="map-canvas" class="map">
           <div id="map" class="map" style="height: 80vh; width:100%">
           </div>
         </div>
       </div>
     </div>
-    <div id="info_modal" class="modal fade" role="dialog">
-      <div class="modal-dialog modal-lg">
-        <!-- Modal content-->
+    <div id="info_modal" class="modal" role="dialog">
+       <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -435,17 +440,16 @@
           </div>
           <div class="modal-body" style="">
             <div class="row" style="height: 40vh;">
-              <div id="info_table" class="col-sm-6">
+              <div id="info_table" class="col s6">
 
               </div>
-              <div id="info_map" class="col-sm-6" style="height:100%;"></div>
+              <div id="info_map" class="col s6" style="height:100%;"></div>
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div>
-      </div>
     </div>
     <div id="dialog_modal" class="modal fade" role="dialog">
       <div class="modal-dialog modal-sm">

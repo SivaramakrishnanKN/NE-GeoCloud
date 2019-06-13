@@ -55,6 +55,7 @@ class TrialView(DataCubeVisualization):
 	tool_name = 'Cloud Coverage'
 	tool_inputs = 3
 	tool_satellites = ['Landsat_5', 'Landsat_7', 'GPM']
+	tool_parameters = 3
 
 class TrialIngest(GetIngestedAreas):
     '''
