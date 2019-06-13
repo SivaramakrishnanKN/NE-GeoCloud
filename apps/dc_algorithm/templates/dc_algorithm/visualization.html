@@ -22,98 +22,445 @@
     under the License.
   -->
 {% block css %}
-<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css"/>
-  <style>
-  #map{ 
-    width: 960px; 
-    height: 500px; 
-    }
-</style>{% endblock %}
+<link rel="stylesheet" href="/static/assets/css/map_tool.css" />
+<link rel="stylesheet" href="/static/assets/css/data_cube_manager.css" />
+<link href="/static/assets/js/leaflet/leaflet.css" rel="stylesheet" type="text/css" />
+<link href="/static/assets/js/Leaflet.draw/leaflet.draw.css" rel="stylesheet" type="text/css" />
+{% endblock %}
 
 {% block javascript %}
 <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+<script src="/static/assets/js/leaflet/leaflet.js"></script>
+<script src="/static/assets/js/Leaflet.draw/leaflet.draw.js"></script>
+<script src="/static/assets/js/drawmap_leaflet.js"></script>
+
 <script>
 
   $(document).ready(function(){
     $('.collapsible').collapsible();
   $('.dropdown-trigger').dropdown();
   $('select').formSelect();
-  $('.datepicker').datepicker();
+  $('.scrollspy').scrollSpy();
   });
 
-
 </script>
+
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col l3">
-          <div class="card col l12 scrollable">
+        <div class="col l3" style="overflow:auto; max-height: 89vh;">
+          <div class="col l12">
 
               <h4 class="page-header">{{tool_name}}</h1>
               <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
-            <p> Satellites
-              {% for satellite in tool_satellites %}
-            <li><a href="#!" class="blue-text"><i class="material-icons">view_module</i>{{ satellite }}</a></li>
-            {% endfor %}
-        </p>
-          
-
-        <ul class="collapsible popout">
-        {% for i in "x"|ljust:tool_inputs %}
-          <li class="active">
-                <div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}} </div>
-                <div class="collapsible-body">
-                  <div class="input-field col s12">
-                  <div class="col s12">
-                    <select multiple>
-                      {% for satellite in tool_satellites %}
-                        <option value="1" data-icon="/static/assets/icons/data_cube_icon.png">{{satellite}}</option>
-                      {% endfor %}
-                    </select>
-                    <label>Select Sources</label>
-                </div>
-                  <div class="col s12">
-                  <label>Start Date</label>
-                    <input type="text" class="datepicker">
+              <form action="">
+          <!-- <ul class="collapsible popout " >
+          {% for i in "x"|ljust:tool_inputs %}
+            <li>
+                  <div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}} </div>
+                  <div class="collapsible-body">
+                    <div class="input-field col s12">
+                    <div class="col s12">
+                      <select multiple>
+                        {% for satellite in tool_satellites %}
+                          <option value="{{satellite}}">{{satellite}}</option>
+                        {% endfor %}
+                        
+                      </select>
+                      <label>Select Sources</label>
                   </div>
-                  <div class="col s12">
-                  <label>End Date</label>
-                    <input type="text" class="datepicker">
+                    <div class="col s12">
+                    <label>Start Date</label>
+                      <input type="text" class="datepicker">
+                    </div>
+                    <div class="col s12">
+                    <label>End Date</label>
+                      <input type="text" class="datepicker">
+                  </div>
                 </div>
-              </div>
-              <p>Select your satellites from the options above</p>              
-                </div>
-            </li>
-        {% endfor %}          
-        </ul>
+                <p>Select your satellites from the options above</p>              
+                  </div>
+              </li>
+          {% endfor %}          
+          </ul> -->
+          {{ form.as_p }}
+          <div class="range-field">
+            <label for="hyperparameter_1">Hyperparameter 1</label>
+                <input type="range" id="hyperparameter_1" min="0" max="100">                
+            </div>
+          <div class="range-field">
+            <label for="hyperparameter_1">Hyperparameter 2</label>
+                <input type="range" id="hyperparameter_2" min="0" max="100">                
+            </div>
+          <div class="range-field">
+            <label for="hyperparameter_1">Hyperparameter 3</label>
+                <input type="range" id="hyperparameter_3" min="0" max="100">                
+            </div>
+
+        </form>
 
       </div>
         </div>
         
-      <div class="card col l9">
-          <div id="map"></div>
+      <div class="col l9 fullscreen-col seamless-col map-col">
+        <div id="map-canvas" class="map">
+          <div id="map" style="height: 93vh; width:100%"></div>
+        </div>
         </div>
     </div>
 </div>
 
 <script>
 
-    var map = L.map('map',{scrollWheelZoom:false}).setView([25.6737, 91.9132], 15);
+  var map, info_map;
+  var ingestedAreaLayerGroups = {};
+  var layerIdDateRange = {};
+  var highlightDiv = '#ff0000';
+  var unHighlightDiv = '#ffffff';
+  var highlightLayer = '#ff0000';
+  var unHighlightLayer = '#ff0000';
 
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+  $(function() {
+      $('.datepicker').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        showClearBtn: true,
+        todayHighlight: true,
+        yearRange: [1970,2019]
+      });
+      $(".tooltipped").tooltip();
+
+      // Map related functionality - generate two leaflet maps, one for the modal and one for the main view.
+      osm = new L.TileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+
   
-    L.tileLayer.wms("http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", {
-      layers: 'nexrad-n0r-900913',
-      format: 'image/png',
-      transparent: true,
-    }).addTo(map);
+      });
 
+      
+      map = new L.Map('map', {
+        minZoom: 3,
+        maxZoom: 6,
+        zoomSnap: 0.25,
+      });
+      
+      map.addLayer(osm);
+    map.setView([0, 0], 3);
+      map.setMaxBounds([
+        [-60, -200],
+        [85, 200]
+      ]);
 
-  var marker = L.marker([25.6737, 91.9132]).addTo(map);
-  
+      load_ingested_areas();
+      initialize_map_listeners();
+
+  });
+
+  var ingestion_data = undefined;
+  function load_ingested_areas() {
+    jQuery.get('{% url "get_ingested_areas" %}', {}, function(result) {
+        if(result.status == "ERROR") {
+          set_modal_content("Error", result.message);
+          return;
+        } else {
+          ingestion_data = result
+          add_ingested_areas(ingestedAreaLayerGroups, ingestion_data);
+        }
+    });
+  }
+
+  function update_shown_cubes() {
+
+    $('.area_details_container').hide();
+
+    // Get the values of dates.
+    var startInputYear = Date.parse($('#id_start_date').val());
+    var endInputYear = Date.parse($('#id_end_date').val());
+
+    if (!startInputYear) {
+      startInputYear = Date.parse("01/01/1900");
+    }
+    if (!endInputYear) {
+      endInputYear = Date.parse("01/01/3000");
+    }
+
+    // Remove the layers to start.
+    for (groupLayerNum in ingestedAreaLayerGroups) {
+      ingestedAreaLayerGroups[groupLayerNum].removeFrom(map);
+      for (individualLayerNum in ingestedAreaLayerGroups[groupLayerNum].getLayers()) {
+        ingestedAreaLayerGroups[groupLayerNum].getLayers()[individualLayerNum].removeFrom(map);
+      }
+    }
+
+    var platform_input = jQuery("#id_platform").val();
+
+    function is_in_date_range(id) {
+      return ((startInputYear >= Date.parse(layerIdDateRange[id][0])) &&
+          startInputYear <= Date.parse(layerIdDateRange[id][1])) ||
+        (endInputYear >= Date.parse(layerIdDateRange[id][0]) &&
+          endInputYear <= Date.parse(layerIdDateRange[id][1])) ||
+        (startInputYear < Date.parse(layerIdDateRange[id][0]) &&
+          endInputYear > Date.parse(layerIdDateRange[id][1]))
+    }
+
+    switch(platform_input) {
+      case "All":
+        for (key in ingestion_data) {
+          for (layerId in ingestedAreaLayerGroups[key]._layers) {
+            if(is_in_date_range(layerId)) {
+              ingestedAreaLayerGroups[key]._layers[layerId].addTo(map);
+            }
+          }
+        }
+      break;
+      default:
+        for (layerId in ingestedAreaLayerGroups[platform_input]._layers) {
+          if(is_in_date_range(layerId)) {
+            ingestedAreaLayerGroups[platform_input]._layers[layerId].addTo(map);
+          }
+        }
+      break;
+    }
+
+    // Loop over all the satellite check boxes.
+    $('.checkClassIngestedMode').each(function(e) {
+      if ($(this).is(":checked")) {
+        // Go through all the layers in that group.
+        for (layerId in ingestedAreaLayerGroups[$(this).val()]._layers) {
+          // Check for approriate year ranges.
+
+        }
+      }
+    });
+  }
+
+  function initialize_map_listeners() {
+    /* Adding a listener with a call to highlight ingested area mouse cursor is in. */
+    map.addEventListener('mousemove', function(e) {
+      drillDown(e.latlng, activate_layer, deactivate_layer);
+    });
+
+    /* Adding on click event for clicking on a region to add to side list. */
+    map.on('click', function(e) {
+      $('.area_details_container').hide();
+      reveal_area_card(e.latlng, show_area_card);
+    });
+  }
+
+  // Handler for when the mouse cursor enters a div in the list.
+  function activate_card(leafletId) {
+    map.eachLayer(function(layer) {
+      if (layer instanceof L.Rectangle && layer._leaflet_id == leafletId) {
+        layer.setStyle({
+          fillColor: highlightLayer,
+          color: highlightLayer
+        });
+        $('#' + leafletId).css('background-color', highlightDiv);
+      }
+    });
+  }
+
+  // Handle for when the mouse cursor exits a div in the list.
+  function deactivate_card(leafletId) {
+    map.eachLayer(function(layer) {
+      if (layer instanceof L.Rectangle && layer._leaflet_id == leafletId) {
+        layer.setStyle({
+          fillColor: unHighlightLayer,
+          color: unHighlightLayer
+        });
+        $('#' + leafletId).css('background-color', unHighlightDiv);
+      }
+    });
+  }
+
+  // Highlight the ingested area(s) the cursor is in and the side list equivalent.
+  function activate_layer(layer) {
+    layer.setStyle({
+      fillColor: highlightLayer,
+      color: highlightLayer
+    });
+    $('#' + layer._leaflet_id).css('background-color', highlightDiv);
+  }
+
+  // Unhighlight the ingested area(s) the cursor is in and the side list equivalent(s).
+  function deactivate_layer(layer) {
+    layer.setStyle({
+      fillColor: unHighlightLayer,
+      color: unHighlightLayer
+    });
+    $('#' + layer._leaflet_id).css('background-color', unHighlightDiv);
+  }
+
+  // Display the div in the list.
+  function show_area_card(layer) {
+    $('#' + layer._leaflet_id).fadeIn();
+  }
+
+  // Hide the div in the list.
+  function hide_area_card(event, id) {
+    $('#' + id).fadeOut();
+    // Prevent the click event from propagating upwards in the DOM.
+    event.stopPropagation();
+  }
+
+  function drillDown(selectedPoint, selectedFunc, deSelectedFunc) {
+    map.eachLayer(function(layer) {
+      if (layer instanceof L.Rectangle) {
+        if (selectedPoint['lat'] > layer.getBounds().getSouthWest()['lat'] &&
+          selectedPoint['lat'] < layer.getBounds().getNorthEast()['lat'] &&
+          selectedPoint['lng'] > layer.getBounds().getSouthWest()['lng'] &&
+          selectedPoint['lng'] < layer.getBounds().getNorthEast()['lng']) {
+          selectedFunc(layer);
+        } else {
+          deSelectedFunc(layer);
+        }
+      }
+    });
+  }
+
+  // Display the modal equivalent with data for the DIV.
+  function displayModal(id, key, index) {
+    var query_string = jQuery.param(ingestion_data[key][index]);
+    var additional_information = `
+    <dl class="dl-horizontal">
+      <dt style="text-align:left;">Satellite</dt>
+      <dd>` + key.replace('_', ' ') + `</dd>
+      <dt style="text-align:left;">Product</dt>
+      <dd>` + ingestion_data[key][index]['product'] + `</dd>
+      <dt style="text-align:left;">Min Latitude</dt>
+      <dd>` + ingestion_data[key][index]['latitude_min'] + `</dd>
+      <dt style="text-align:left;">Max Latitude</dt>
+      <dd>` + ingestion_data[key][index]['latitude_max'] + `</dd>
+      <dt style="text-align:left;">Min Longitude</dt>
+      <dd>` + ingestion_data[key][index]['longitude_min'] + `</dd>
+      <dt style="text-align:left;">Max Longitude</dt>
+      <dd>` + ingestion_data[key][index]['longitude_max'] + `</dd>
+      <dt style="text-align:left;">Start Date</dt>
+      <dd>` + ingestion_data[key][index]['start_date'] + `</dd>
+      <dt style="text-align:left;">End Date</dt>
+      <dd>` + ingestion_data[key][index]['end_date'] + `</dd>
+      <dt style="text-align:left;">Scene Count</dt>
+      <dd>` + ingestion_data[key][index]['scene_count'] + `</dd>
+      <dt style="text-align:left;">Pixel Count</dt>
+      <dd>` + ingestion_data[key][index]['pixel_count'] + `</dd>
+    </dl>
+    <div class="form-group">
+      <a class="btn btn-default form-control" target="_blank" href="/data_cube_manager/dataset_types/view/` + ingestion_data[key][index]['dataset_type_ref'] + `">View Dataset Type</a>
+    </div>
+    <div class="form-group">
+      <a class="btn btn-default form-control" target="_blank" href="dataset_types/` + ingestion_data[key][index]['dataset_type_ref'] + `/datasets">View Datasets</a>
+    </div>
+    <div class="form-group">
+      <a class="btn btn-default form-control" target="_blank" href="{% url 'create_ingestion_subset' %}?` + query_string + `">Create a Sample Cube</a>
+    </div>
+    `;
+    jQuery("#info_table").html(additional_information);
+    jQuery("#info_modal").modal();
+    // horrid hack since the map needs to be initialized when the modal is loaded.
+    setTimeout(function() {
+        info_map.invalidateSize();
+        // Remove all Rectangle layers so they don't stack for each card click.
+        info_map.eachLayer(function(layer) {
+          if (layer instanceof L.Rectangle) {
+            info_map.removeLayer(layer);
+          }
+        });
+
+        info_map.fitBounds([
+          [ingestion_data[key][index]['latitude_min'], ingestion_data[key][index]['longitude_min']],
+          [ingestion_data[key][index]['latitude_max'], ingestion_data[key][index]['longitude_max']]
+        ], {padding: [50, 50]});
+
+        var rectangle = L.rectangle([
+          [ingestion_data[key][index]['latitude_min'], ingestion_data[key][index]['longitude_min']],
+          [ingestion_data[key][index]['latitude_min'], ingestion_data[key][index]['longitude_max']],
+          [ingestion_data[key][index]['latitude_max'], ingestion_data[key][index]['longitude_max']],
+          [ingestion_data[key][index]['latitude_max'], ingestion_data[key][index]['longitude_min']]
+        ], {
+          color: unHighlightLayer
+        });
+
+        // Add rectangle to map in the modal popup.
+        rectangle.addTo(info_map);
+    }, 250);
+
+  }
+
+  // Hides the modal on the page.
+  function hideModal() {
+    $('#moreInfoModal').fadeOut();
+    $('.mainpage').css('pointer-events', 'auto');
+  }
+
+  // Function for handling highlighted click area on the map.
+  function reveal_area_card(selectedPoint, clickFunc) {
+    map.eachLayer(function(layer) {
+      if (layer instanceof L.Rectangle) {
+        if (selectedPoint['lat'] > layer.getBounds().getSouthWest()['lat'] &&
+          selectedPoint['lat'] < layer.getBounds().getNorthEast()['lat'] &&
+          selectedPoint['lng'] > layer.getBounds().getSouthWest()['lng'] &&
+          selectedPoint['lng'] < layer.getBounds().getNorthEast()['lng']) {
+          show_area_card(layer);
+        }
+      }
+    });
+  }
+
+  function add_ingested_areas(ingestedAreaLayerGroups, ingestion_data) {
+    // Set up the layer groups and other required objects for the ingested area JSON data.
+    for (key in ingestion_data) {
+      var aLayerGroup = L.layerGroup();
+      for (let i = 0; i < ingestion_data[key].length; ++i) {
+        var rectangle = L.rectangle([
+          [ingestion_data[key][i]['latitude_min'], ingestion_data[key][i]['longitude_min']],
+          [ingestion_data[key][i]['latitude_min'], ingestion_data[key][i]['longitude_max']],
+          [ingestion_data[key][i]['latitude_max'], ingestion_data[key][i]['longitude_max']],
+          [ingestion_data[key][i]['latitude_max'], ingestion_data[key][i]['longitude_min']]
+        ], {
+          color: unHighlightLayer
+        });
+
+        // Add rectangle to layer group object.
+        aLayerGroup.addLayer(rectangle);
+
+        // Getting Leaflet generated ID of the rectangle.
+        var id = aLayerGroup.getLayerId(rectangle);
+        layerIdDateRange[id] = [ingestion_data[key][i]['start_date'], ingestion_data[key][i]['end_date']];
+
+        // Dynamically generating the DIVs.
+        var area_details_card = `
+        <div id="` + id + `" class="col-lg-12 seamless-col area_details_container" onclick="displayModal('` + id + `', '` + key + `', '` + i + `')">
+          <span class="glyphicon glyphicon-remove pull-left" onclick="hide_area_card(event, ` + id + `)"></span>
+          ` + ingestion_data[key][i].product + `
+        </div>
+        `
+        $('#areaList').append(area_details_card);
+
+        $('#' + id).hover(function() {
+          activate_card($(this).attr("id"));
+        }, function() {
+          deactivate_card($(this).attr("id"));
+        });
+      } // End loop over array.
+
+      // Add layer group object to list and to map.
+      aLayerGroup.addTo(map);
+      ingestedAreaLayerGroups[key] = aLayerGroup
+    } // End loop over keys.
+  }
+
+  function set_dialog_modal_content(title, body) {
+      jQuery("#dialog_modal .modal-title").text(title);
+      jQuery("#dialog_modal .modal-body p").text(body);
+      jQuery("#dialog_modal").modal();
+  }
+
+  function hide_dialog_modal() {
+      jQuery("#dialog_modal").modal('hide');
+  }
+
 </script>
 {% endblock %}
