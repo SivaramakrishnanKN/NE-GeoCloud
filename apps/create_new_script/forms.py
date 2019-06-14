@@ -65,4 +65,4 @@ class GetHyperParametersForm(forms.Form):
                               max_length=150,
                               help_text='Give details for given parmeter\
                               (optional)',
-                              blank=True)
+                              required=False)

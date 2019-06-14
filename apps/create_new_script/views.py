@@ -7,6 +7,6 @@ from apps.create_new_script import forms
 class NewScriptView(View):
 
     def get(self, request):
-        context = {'form': forms.GetParametersForm()}
+        context = {'form': forms.GetProductDetailsForm()}
         template = 'create_new_script/new_script.html'
         return render(request, template, context)
