@@ -38,13 +38,13 @@
 
   $(document).ready(function(){
     $('.collapsible').collapsible({
-    	inDuration: 500,
-    	outDuration: 500
+      inDuration: 500,
+      outDuration: 500
 
     });
-	$('.dropdown-trigger').dropdown();
-	$('select').formSelect();
-	$('.scrollspy').scrollSpy();
+  $('.dropdown-trigger').dropdown();
+  $('select').formSelect();
+  $('.scrollspy').scrollSpy();
   });
 
 </script>
@@ -54,47 +54,47 @@
 {% block content %}
 <div class="container">
     <div class="row">
-      	<div class="col l3" style="overflow:auto; max-height: 95vh;">
-        	<div class="col l12">
+        <div class="col l3" style="overflow:auto; max-height: 95vh;">
+          <div class="col l12">
 
-          		<h4 class="page-header">{{tool_name}}</h1>
-        	  	<p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
-        	  	<form action="" method="POST">
+              <h4 class="page-header">{{tool_name}}</h1>
+              <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
+              <form action="" method="POST">
 
-					<ul class="collapsible popout" >
-					{% for f in form %}
+          <ul class="collapsible popout" >
+          {% for f in form %}
 
-						<li>
-					      	<div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}} </div>
-					      	<div class="collapsible-body">
-					      		{{ f.as_p }}						
-					      	</div>
-					    </li>
-					{% endfor %}			    
-					</ul>
-					<div class="range-field">
-						<label for="hyperparameter_1">Hyperparameter 1</label>
-      					<input type="range" id="hyperparameter_1" min="0" max="100">      					
-    				</div>
-					<div class="range-field">
-						<label for="hyperparameter_1">Hyperparameter 2</label>
-      					<input type="range" id="hyperparameter_2" min="0" max="100">      					
-    				</div>
-					<div class="range-field">
-						<label for="hyperparameter_1">Hyperparameter 3</label>
-      					<input type="range" id="hyperparameter_3" min="0" max="100">      					
-    				</div>
+            <li>
+                  <div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}} </div>
+                  <div class="collapsible-body">
+                    {{ f.as_p }}            
+                  </div>
+              </li>
+          {% endfor %}          
+          </ul>
+          <div class="range-field">
+            <label for="hyperparameter_1">Hyperparameter 1</label>
+                <input type="range" id="hyperparameter_1" min="0" max="100">                
+            </div>
+          <div class="range-field">
+            <label for="hyperparameter_1">Hyperparameter 2</label>
+                <input type="range" id="hyperparameter_2" min="0" max="100">                
+            </div>
+          <div class="range-field">
+            <label for="hyperparameter_1">Hyperparameter 3</label>
+                <input type="range" id="hyperparameter_3" min="0" max="100">                
+            </div>
 
-				</form>
+        </form>
 
-			</div>
-      	</div>
-      	
-     	<div class="col l9 fullscreen-col seamless-col map-col">
-     		<div id="map-canvas" class="map">
-     		  <div id="map" style="height: 93vh; width:100%"></div>
-     		</div>
-      	</div>
+      </div>
+        </div>
+        
+      <div class="col l9 fullscreen-col seamless-col map-col">
+        <div id="map-canvas" class="map">
+          <div id="map" style="height: 93vh; width:100%"></div>
+        </div>
+        </div>
     </div>
 </div>
 
@@ -121,9 +121,9 @@
 
       // Map related functionality - generate two leaflet maps, one for the modal and one for the main view.
       osm = new L.TileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 
-	
+  
       });
 
       
@@ -134,7 +134,7 @@
       });
       
       map.addLayer(osm);
-	  map.setView([0, 0], 3);
+    map.setView([0, 0], 3);
       map.setMaxBounds([
         [-60, -200],
         [85, 200]

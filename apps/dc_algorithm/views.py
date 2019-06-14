@@ -19,28 +19,14 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
-from django.core.files.base import ContentFile
-from django.template.loader import render_to_string
-from django.forms.models import model_to_dict
-from django.conf import settings
+from django.shortcuts import render
+from django.http import JsonResponse
 from django.views import View
-from django.db.models import Q
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
-
-from urllib import parse
-from collections import OrderedDict
-import json
-import yaml
-import uuid
-import shutil
+from django.apps import apps
 
 from apps.data_cube_manager import models
 from apps.dc_algorithm import forms
-from apps.dc_algorithm import utils
-from apps.data_cube_manager import tasks
+
 
 class Parameter:
     name = None
@@ -62,10 +48,11 @@ class ToolClass:
     """
 
     tool_name = None
-    tool_inputs = None
+    tool_inputs = 0
     task_model_name = None
     tool_satellites = None
-    tool_parameters = None
+    tool_parameters = 0
+
     def _get_tool_name(self):
         """Get the tool_name property
 
@@ -84,6 +71,7 @@ class ToolClass:
         #     )
         return self.tool_name
 
+
 class DataCubeVisualization(ToolClass, View):
     """Visualize ingested and indexed Data Cube regions using leaflet"""
 
@@ -97,13 +85,7 @@ class DataCubeVisualization(ToolClass, View):
         context = {'form': form,
                     'tool_name': self.tool_name,
                 }
-        context['dataset_types'] = models.DatasetType.objects.using('agdc').filter(
-            definition__has_keys=['measurements'])
-        context['tool_inputs'] = self.tool_inputs
-        context['tool_satellites'] = self.tool_satellites
-        context['tool_parameters'] = self.tool_parameters
-        return render(request, 'trial.html', context)
-
+        return render(request, 'dc_algorithm/visualization.html', context)
 
 class GetIngestedAreas(View):
     """Get a dict containing details on the ingested areas, grouped by Platform"""
