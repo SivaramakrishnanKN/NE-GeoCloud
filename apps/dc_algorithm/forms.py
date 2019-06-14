@@ -20,45 +20,51 @@
 # under the License.
 
 from django import forms
+from django.core.validators import RegexValidator, validate_comma_separated_integer_list, validate_slug
+from django.core import validators
 from django.db.models import Q
 
+import re
+import datetime
+
+from apps.dc_algorithm.utils import logical_xor
 from apps.data_cube_manager.models import DatasetType
 
 
 class VisualizationForm(forms.Form):
-    """Form meant to validate all metadata fields for an ingestion
-        configuration file."""
+    """Form meant to validate all metadata fields for an ingestion configuration file."""
+    
+    def __init__(self, product_number, *args, **kwargs):
+        satellites = kwargs.pop('satellites')
+        #product_number = kwargs.pop('number')
+        super(VisualizationForm, self).__init__(*args, **kwargs)
+        
+        dataset_types = DatasetType.objects.using('agdc').filter(
+            Q(definition__has_keys=['managed']) & Q(definition__has_keys=['measurements']))
 
-    start_date = forms.DateField(
-        label='Start Date',
-        error_messages={'required': 'Start date is required.'},
-        widget=forms.DateInput(attrs={
+        # The below line gets all dataset_types from the database which have measurement
+        #choices = ["All", *sorted(set([dataset_type.metadata['platform']['code'] for dataset_type in dataset_types]))]
+        self.fields['start_date_%s' % product_number] = forms.CharField(
+            label='Start Date',
+            error_messages={'required': 'Start date is required.'},
+            widget=forms.DateInput(attrs={
             'class': 'datepicker field-divided onchange_filter',
             'placeholder': '01/01/2010',
-            'onchange': "update_shown_cubes()"
+            'onchange': "update_shown_cubes(%d)" %product_number
         }))
-    end_date = forms.DateField(
-        label='End Date',
-        error_messages={'required': 'End date is required.'},
-        widget=forms.DateInput(attrs={
-            'class': 'datepicker field-divided onchange_filter',
-            'placeholder': '01/02/2010',
-            'onchange': "update_shown_cubes()"
+        self.fields['end_date_%s' % product_number] = forms.DateField(
+            label='End Date',
+            error_messages={'required': 'End date is required.'},
+            widget=forms.DateInput(attrs={
+                'class': 'datepicker field-divided onchange_filter',
+                'placeholder': '01/02/2010',
+                'onchange': "update_shown_cubes(%d)" %product_number
         }))
-
-    platform = forms.MultipleChoiceField(
-        label="Source Dataset Type",
-        help_text="Select a platform to filter Data Cubes",
-        widget=forms.Select(attrs={'class': "onchange_refresh",
-                                   'onchange': "update_shown_cubes()"}))
-
-    def __init__(self, *args, **kwargs):
-        super(VisualizationForm, self).__init__(*args, **kwargs)
-        dataset_types = DatasetType.objects.using('agdc').filter(
-            Q(definition__has_keys=['managed']) & Q(definition__has_keys=[
-                'measurements']))
-
-        choices = ["All", *sorted(set([dataset_type.metadata['platform'][
-            'code'] for dataset_type in dataset_types]))]
-        self.fields['platform'].choices = ((platform, platform) for
-                                           platform in choices)
+        self.fields['platform_%s' % product_number] = forms.MultipleChoiceField(
+            label="Source Dataset Type",
+            help_text="Select a platform to filter Data Cubes",
+            widget=forms.Select(attrs={'class': "onchange_refresh",
+                                   'onchange': "update_shown_cubes(%d)" %product_number
+                                   }))
+        self.fields['platform_%s' % product_number].choices = ((satellite, satellite) for satellite in satellites)
+        
