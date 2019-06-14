@@ -43,9 +43,10 @@ from apps.dc_algorithm import utils
 from apps.data_cube_manager import tasks
 
 class Parameter:
-    parameter_name = None
-    parameter_lower = 0
-    parameter_higher = 80
+    name = None
+
+    min = 0
+    max = 80
 
 class ToolClass:
     """Base class for all Tool related classes
@@ -89,7 +90,11 @@ class DataCubeVisualization(ToolClass, View):
     def get(self, request):
         """Main end point for viewing datasets and their extents on a leaflet map"""
         tool_name = self._get_tool_name()
-        context = {'form': forms.VisualizationForm(satellites=self.tool_satellites),
+        form = []
+        for i in range(self.tool_inputs):
+            form.append(forms.VisualizationForm(i, satellites=self.tool_satellites))
+
+        context = {'form': form,
                     'tool_name': self.tool_name,
                 }
         context['dataset_types'] = models.DatasetType.objects.using('agdc').filter(

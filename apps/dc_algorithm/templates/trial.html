@@ -37,7 +37,11 @@
 <script>
 
   $(document).ready(function(){
-    $('.collapsible').collapsible();
+    $('.collapsible').collapsible({
+    	inDuration: 500,
+    	outDuration: 500
+
+    });
 	$('.dropdown-trigger').dropdown();
 	$('select').formSelect();
 	$('.scrollspy').scrollSpy();
@@ -57,13 +61,13 @@
         	  	<p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
         	  	<form action="" method="POST">
 
-					<ul class="collapsible popout " >
-					{% for i in "x"|ljust:tool_inputs %}
+					<ul class="collapsible popout" >
+					{% for f in form %}
 
 						<li>
 					      	<div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}} </div>
 					      	<div class="collapsible-body">
-					      		{{ form.as_p }}						
+					      		{{ f.as_p }}						
 					      	</div>
 					    </li>
 					{% endfor %}			    
@@ -154,13 +158,13 @@
     });
   }
 
-  function update_shown_cubes() {
+  function update_shown_cubes(i) {
 
     $('.area_details_container').hide();
 
     // Get the values of dates.
-    var startInputYear = Date.parse($('#id_start_date').val());
-    var endInputYear = Date.parse($('#id_end_date').val());
+    var startInputYear = Date.parse($('#id_start_date_'+i).val());
+    var endInputYear = Date.parse($('#id_end_date_'+i).val());
 
     if (!startInputYear) {
       startInputYear = Date.parse("01/01/1900");
@@ -177,7 +181,7 @@
       }
     }
 
-    var platform_input = jQuery("#id_platform").val();
+    var platform_input = jQuery("#id_platform_"+i).val();
 
     function is_in_date_range(id) {
       return ((startInputYear >= Date.parse(layerIdDateRange[id][0])) &&
