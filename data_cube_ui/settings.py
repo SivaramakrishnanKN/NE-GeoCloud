@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'apps.dc_algorithm',
     'apps.pages',
     'apps.accounts',
+    'apps.create_new_script',
     'apps.data_cube_manager',
     'data_cube_ui',
     'django.contrib.admin',
@@ -81,6 +82,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap3',
+    'material',
 ]
 
 MIDDLEWARE_CLASSES = [

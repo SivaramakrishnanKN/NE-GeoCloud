@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'^urbanization/', include('apps.urbanization.urls')),
     url(r'^task_manager/', include('apps.task_manager.urls')),
     url(r'^data_cube_manager/', include('apps.data_cube_manager.urls')),
+    url(r'^create_new_script/', include('apps.create_new_script.urls')),
     url(r'^accounts/', include('apps.accounts.urls')),
     url(r'^', include('apps.pages.urls')),
 ] + static(
