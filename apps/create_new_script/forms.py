@@ -13,6 +13,15 @@ def validate_product_sources(product_sources, num_input_products):
             specified number of products'))
 
 
+def validate_param_name(sourcefile, param_name):
+    with open(sourcefile) as notebook:
+        for line in notebook:
+            for word in line.split():
+                if param_name in word:
+                    return True
+    return False
+
+
 class GetProductDetailsForm(forms.Form):
 
     script_name = forms.CharField(label='Script Name',
@@ -50,7 +59,9 @@ class GetHyperParametersForm(forms.Form):
     parameter_name = forms.CharField(label='Parameter Name',
                                      max_length=20,
                                      help_text='This is the name as seen by the\
-                                     script users')
+                                     script users',
+                                     validators=[
+                                        validate_param_name])
     parameter_variable = forms.CharField(label='Varaible name',
                                          max_length=30,
                                          help_text='This is the name of the corresponding\
