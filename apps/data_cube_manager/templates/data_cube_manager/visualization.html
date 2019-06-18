@@ -59,7 +59,8 @@
         zoomSnap: 0.25,
       });
       info_map = new L.Map('info_map', {
-        zoomSnap: 0.25
+        zoomSnap: 0.25,
+        maxZoom: 1,
       });
       map.addLayer(osm);
       info_map.addLayer(info_osm);
@@ -227,40 +228,33 @@
   function displayModal(id, key, index) {
     var query_string = jQuery.param(ingestion_data[key][index]);
     var additional_information = `
-    <dl>
-      <dt style="text-align:left;">Satellite</dt>
-      <dd>` + key.replace('_', ' ') + `</dd>
-      <dt style="text-align:left;">Product</dt>
-      <dd>` + ingestion_data[key][index]['product'] + `</dd>
-      <dt style="text-align:left;">Min Latitude</dt>
-      <dd>` + ingestion_data[key][index]['latitude_min'] + `</dd>
-      <dt style="text-align:left;">Max Latitude</dt>
-      <dd>` + ingestion_data[key][index]['latitude_max'] + `</dd>
-      <dt style="text-align:left;">Min Longitude</dt>
-      <dd>` + ingestion_data[key][index]['longitude_min'] + `</dd>
-      <dt style="text-align:left;">Max Longitude</dt>
-      <dd>` + ingestion_data[key][index]['longitude_max'] + `</dd>
-      <dt style="text-align:left;">Start Date</dt>
-      <dd>` + ingestion_data[key][index]['start_date'] + `</dd>
-      <dt style="text-align:left;">End Date</dt>
-      <dd>` + ingestion_data[key][index]['end_date'] + `</dd>
-      <dt style="text-align:left;">Scene Count</dt>
-      <dd>` + ingestion_data[key][index]['scene_count'] + `</dd>
-      <dt style="text-align:left;">Pixel Count</dt>
-      <dd>` + ingestion_data[key][index]['pixel_count'] + `</dd>
-    </dl>
-    <div class="form-group">
-      <a class="btn btn-default form-control" target="_blank" href="/data_cube_manager/dataset_types/view/` + ingestion_data[key][index]['dataset_type_ref'] + `">View Dataset Type</a>
-    </div>
-    <div class="form-group">
-      <a class="btn btn-default form-control" target="_blank" href="dataset_types/` + ingestion_data[key][index]['dataset_type_ref'] + `/datasets">View Datasets</a>
-    </div>
-    <div class="form-group">
-      <a class="btn btn-default form-control" target="_blank" href="{% url 'create_ingestion_subset' %}?` + query_string + `">Create a Sample Cube</a>
-    </div>
+    <div class="card col l12" style="overflow:auto; max-height: 70vh;">
+      <dl>
+        <dt style="text-align:left;">Satellite: <a style="text-align:right;">` + key.replace('_', ' ') + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Product: <a style="text-align:right;">` + ingestion_data[key][index]['product'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Min Latitude: <a style="text-align:right;">` + ingestion_data[key][index]['latitude_min'] + `</a></dt>
+        <br>        
+        <dt style="text-align:left;">Max Latitude: <a style="text-align:right;">` + ingestion_data[key][index]['latitude_max'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Min Longitude: <a style="text-align:right;">` + ingestion_data[key][index]['longitude_min'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Max Longitude: <a style="text-align:right;">` + ingestion_data[key][index]['longitude_max'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Start Date: <a style="text-align:right;">` + ingestion_data[key][index]['start_date'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">End Date: <a style="text-align:right;">` + ingestion_data[key][index]['end_date'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Scene Count: <a style="text-align:right;">` + ingestion_data[key][index]['scene_count'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Pixel Count: <a style="text-align:right;">` + ingestion_data[key][index]['pixel_count'] + `</a></dt>
+        <br>      
+      </dl>
+    </div>    
     `;
     jQuery("#info_table").html(additional_information);
-    jQuery("#info_modal").modal();
+    $("#info_modal").modal('open');
     // horrid hack since the map needs to be initialized when the modal is loaded.
     setTimeout(function() {
         info_map.invalidateSize();
@@ -325,7 +319,7 @@
         // Dynamically generating the DIVs.
         var area_details_card = `
         <div id="` + id + `" class="col l12 seamless-col area_details_container" onclick="displayModal('` + id + `', '` + key + `', '` + i + `')">
-          <span class="glyphicon glyphicon-remove pull-left" onclick="hide_area_card(event, ` + id + `)"></span>
+          <i class="small material-icons right" onclick="hide_area_card(event, ` + id + `)">blur_on</i>
           ` + ingestion_data[key][i].product + `
         </div>
         `
@@ -380,6 +374,8 @@
         </div>
       </div>
     </div>
+
+
     <div id="info_modal" class="modal" role="dialog">
        <!-- Modal content-->
         <div class="modal-content">
@@ -389,17 +385,20 @@
           </div>
           <div class="modal-body" style="">
             <div class="row" style="height: 40vh;">
-              <div id="info_table" class="col s6">
+              <div id="info_table" class="col s6" style="overflow:auto; max-height: 70vh;">
 
               </div>
               <div id="info_map" class="col s6" style="height:100%;"></div>
             </div>
           </div>
           <div class="modal-footer">
+              <button data-target="modal1" class="btn modal-trigger">Modal</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
         </div>
     </div>
+
+
     <div id="dialog_modal" class="modal fade" role="dialog">
       <div class="modal-dialog modal-sm">
         <!-- Modal content-->

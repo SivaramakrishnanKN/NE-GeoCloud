@@ -30,9 +30,10 @@ from apps.dc_algorithm import forms
 
 class Parameter:
     name = None
-
+    variable = None
     min = 0
     max = 80
+    help = None
 
 class ToolClass:
     """Base class for all Tool related classes

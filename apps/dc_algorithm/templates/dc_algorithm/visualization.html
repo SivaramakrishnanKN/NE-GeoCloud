@@ -37,11 +37,13 @@
 <script>
 
   $(document).ready(function(){
-    $('.collapsible').collapsible({
+  $('.collapsible').collapsible({
       inDuration: 500,
       outDuration: 500
-
-    });
+   });
+  $('.collapsible-header').on("click", function(){
+    $("#id_start_date_1").val($("#hi").val());
+  })
   $('.dropdown-trigger').dropdown();
   $('select').formSelect();
   $('.scrollspy').scrollSpy();
@@ -54,48 +56,74 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col l3" style="overflow:auto; max-height: 95vh;">
-          <div class="col l12">
+        <div class="col l3" style="overflow:auto; max-height: 90vh;">
+            <div class="col l12">
 
-              <h4 class="page-header">{{tool_name}}</h1>
-              <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
-              <form action="" method="POST">
+                <h4 class="page-header">{{tool_name}}</h4>
+                <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
+                <form action="" method="POST">
+                    <div id="areaList" style="overflow:hidden;">
+                                
+                                </div>
+                    <ul class="collapsible popout" >
+                    {% for f in form %}
 
-          <ul class="collapsible popout" >
-          {% for f in form %}
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}}</div>
+                            <div class="hidden"  id="hi">1/2/2019</div>
+                            <div class="collapsible-body">
+                                      
+                                {{ f.as_p }}  
+                            </div>                            
+                        </li>
+                    {% endfor %}          
+                    </ul>
+                    <div class="range-field">
+                      <label for="hyperparameter_1">Hyperparameter 1</label>
+                          <input type="range" id="hyperparameter_1" min="0" max="100">                
+                    </div>
+                    <div class="range-field">
+                      <label for="hyperparameter_1">Hyperparameter 2</label>
+                          <input type="range" id="hyperparameter_2" min="0" max="100">                
+                    </div>
+                    <div class="range-field">
+                      <label for="hyperparameter_1">Hyperparameter 3</label>
+                          <input type="range" id="hyperparameter_3" min="0" max="100">                
+                    </div>
 
-            <li>
-                  <div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}} </div>
-                  <div class="collapsible-body">
-                    {{ f.as_p }}            
+                    
+
+                </form>
+            </div>
+        </div>        
+        <div class="col l9">
+            <div id="map-canvas" class="map">
+                <div id="map" style="height: 93vh; width:100%"></div>
+            </div>
+        </div>
+
+        <div id="info_modal" class="modal" role="dialog">
+       <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Additional Information</h4>
+              </div>
+              <div class="modal-body" style="">
+                <div class="row" style="height: 40vh;">
+                  <div id="info_table" class="col s6" style="overflow:auto; max-height: 70vh;">
+
                   </div>
-              </li>
-          {% endfor %}          
-          </ul>
-          <div class="range-field">
-            <label for="hyperparameter_1">Hyperparameter 1</label>
-                <input type="range" id="hyperparameter_1" min="0" max="100">                
+                  <div id="info_map" class="col s6" style="height:100%;"></div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
             </div>
-          <div class="range-field">
-            <label for="hyperparameter_1">Hyperparameter 2</label>
-                <input type="range" id="hyperparameter_2" min="0" max="100">                
-            </div>
-          <div class="range-field">
-            <label for="hyperparameter_1">Hyperparameter 3</label>
-                <input type="range" id="hyperparameter_3" min="0" max="100">                
-            </div>
-
-        </form>
-
-      </div>
-        </div>
-        
-      <div class="col l9 fullscreen-col seamless-col map-col">
-        <div id="map-canvas" class="map">
-          <div id="map" style="height: 93vh; width:100%"></div>
-        </div>
         </div>
     </div>
+
 </div>
 
 <script>
@@ -121,9 +149,12 @@
 
       // Map related functionality - generate two leaflet maps, one for the modal and one for the main view.
       osm = new L.TileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'  
+      });
 
-  
+      info_osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        noWrap: true,
+        attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
       });
 
       
@@ -132,12 +163,22 @@
         maxZoom: 6,
         zoomSnap: 0.25,
       });
+      info_map = new L.Map('info_map', {
+        zoomSnap: 0.25
+      });
       
       map.addLayer(osm);
+      info_map.addLayer(info_osm);
     map.setView([0, 0], 3);
       map.setMaxBounds([
         [-60, -200],
         [85, 200]
+      ]);
+
+      info_map.setView([0, 0], 3);
+      info_map.setMaxBounds([
+        [-60, -180],
+        [85, 180]
       ]);
 
       load_ingested_areas();
@@ -306,45 +347,41 @@
       }
     });
   }
+  $(document).ready(function(){
+    $('.modal').modal();
+  });
 
   // Display the modal equivalent with data for the DIV.
   function displayModal(id, key, index) {
     var query_string = jQuery.param(ingestion_data[key][index]);
     var additional_information = `
-    <dl class="dl-horizontal">
-      <dt style="text-align:left;">Satellite</dt>
-      <dd>` + key.replace('_', ' ') + `</dd>
-      <dt style="text-align:left;">Product</dt>
-      <dd>` + ingestion_data[key][index]['product'] + `</dd>
-      <dt style="text-align:left;">Min Latitude</dt>
-      <dd>` + ingestion_data[key][index]['latitude_min'] + `</dd>
-      <dt style="text-align:left;">Max Latitude</dt>
-      <dd>` + ingestion_data[key][index]['latitude_max'] + `</dd>
-      <dt style="text-align:left;">Min Longitude</dt>
-      <dd>` + ingestion_data[key][index]['longitude_min'] + `</dd>
-      <dt style="text-align:left;">Max Longitude</dt>
-      <dd>` + ingestion_data[key][index]['longitude_max'] + `</dd>
-      <dt style="text-align:left;">Start Date</dt>
-      <dd>` + ingestion_data[key][index]['start_date'] + `</dd>
-      <dt style="text-align:left;">End Date</dt>
-      <dd>` + ingestion_data[key][index]['end_date'] + `</dd>
-      <dt style="text-align:left;">Scene Count</dt>
-      <dd>` + ingestion_data[key][index]['scene_count'] + `</dd>
-      <dt style="text-align:left;">Pixel Count</dt>
-      <dd>` + ingestion_data[key][index]['pixel_count'] + `</dd>
-    </dl>
-    <div class="form-group">
-      <a class="btn btn-default form-control" target="_blank" href="/data_cube_manager/dataset_types/view/` + ingestion_data[key][index]['dataset_type_ref'] + `">View Dataset Type</a>
-    </div>
-    <div class="form-group">
-      <a class="btn btn-default form-control" target="_blank" href="dataset_types/` + ingestion_data[key][index]['dataset_type_ref'] + `/datasets">View Datasets</a>
-    </div>
-    <div class="form-group">
-      <a class="btn btn-default form-control" target="_blank" href="{% url 'create_ingestion_subset' %}?` + query_string + `">Create a Sample Cube</a>
-    </div>
+    <div class="card col l12" style="overflow:auto; max-height: 70vh;">
+      <dl>
+        <dt style="text-align:left;">Satellite: <a style="text-align:right;">` + key.replace('_', ' ') + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Product: <a style="text-align:right;">` + ingestion_data[key][index]['product'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Min Latitude: <a style="text-align:right;">` + ingestion_data[key][index]['latitude_min'] + `</a></dt>
+        <br>        
+        <dt style="text-align:left;">Max Latitude: <a style="text-align:right;">` + ingestion_data[key][index]['latitude_max'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Min Longitude: <a style="text-align:right;">` + ingestion_data[key][index]['longitude_min'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Max Longitude: <a style="text-align:right;">` + ingestion_data[key][index]['longitude_max'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Start Date: <a style="text-align:right;">` + ingestion_data[key][index]['start_date'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">End Date: <a style="text-align:right;">` + ingestion_data[key][index]['end_date'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Scene Count: <a style="text-align:right;">` + ingestion_data[key][index]['scene_count'] + `</a></dt>
+        <br>
+        <dt style="text-align:left;">Pixel Count: <a style="text-align:right;">` + ingestion_data[key][index]['pixel_count'] + `</a></dt>
+        <br>      
+      </dl>
+    </div>    
     `;
     jQuery("#info_table").html(additional_information);
-    jQuery("#info_modal").modal();
+    $("#info_modal").modal('open');
     // horrid hack since the map needs to be initialized when the modal is loaded.
     setTimeout(function() {
         info_map.invalidateSize();
@@ -418,8 +455,8 @@
 
         // Dynamically generating the DIVs.
         var area_details_card = `
-        <div id="` + id + `" class="col-lg-12 seamless-col area_details_container" onclick="displayModal('` + id + `', '` + key + `', '` + i + `')">
-          <span class="glyphicon glyphicon-remove pull-left" onclick="hide_area_card(event, ` + id + `)"></span>
+        <div id="` + id + `" class="col l12 seamless-col area_details_container" onclick="displayModal('` + id + `', '` + key + `', '` + i + `')">
+          <span class="small material-icons right" onclick="hide_area_card(event, ` + id + `)">blur_on</span>
           ` + ingestion_data[key][i].product + `
         </div>
         `
