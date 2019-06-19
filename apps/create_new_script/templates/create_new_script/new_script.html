@@ -6,8 +6,9 @@
 		position: relative !important;
 		border: 1px solid lightgray;
 		margin: auto;
-		height: 80vh;
-		width: 80%;
+		height: 50vh;
+		width: 100vw;
+        font: 14px monospace;
 	}
 	.scrollmargin {
 		height: 100px;
@@ -18,7 +19,11 @@
 
 {% block javascript %}
 <script src="/static/assets/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-
+<script src="/static/assets/ace-builds/src-noconflict/ext-language_tools.js"></script>
+<script src="/static/assets/ace-builds/src-noconflict/ext-settings_menu.js"></script>
+<script src="/static/assets/ace-builds/src-noconflict/theme-crimson_editor.js"></script>
+<script src="/static/assets/ace-builds/src-noconflict/mode-python.js"></script>
+<script src="/static/assets/js/FileSaver.js"></script>
 
 
 {% endblock %}
@@ -27,23 +32,59 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col l6 offset-l3">
-			{{ form.as_p }}
+		<div class="col l6 offset-l3 card">
+			<h4 class="center-align">Enter the Application Details</h4>
+			<form method="POST">
+				{{ form.as_p }}
+			</form>
 		</div>
-		<div id="editor" class="col l6 offset-l3">function foo(items) {
-    var i;
-    for (i = 0; i &lt; items.length; i++) {
-        alert("Ace Rocks " + items[i]);
-    }
-}
+		<div id="editor" class="col l6 offset-l3">import datacube
+dc = datacube.Datacube('/home/localuser/.datacube.conf')
+#Enter you code from here
+		</div>
+		
+	</div>
+	<div class="row right-align">
+		<div class="col l6 offset-l3">
+			<button id="run" class="waves-effect btn" onclick="">Run</button>
+			<button id="save" class="waves-effect btn">Save</button>
 		</div>
 	</div>
 </div>
 
 <script>
+	ace.require("ace/ext/language_tools");
     var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/twilight");
-    editor.session.setMode("ace/mode/javascript");
-    editor.resize();
+	ace.require("ace/ext/settings_menu").init(editor);
+	editor.setTheme("ace/theme/iplastic");
+    editor.session.setMode("ace/mode/python");
+
+    editor.commands.addCommands([{
+		name: "showSettingsMenu",
+		bindKey: {win: "Ctrl-,", mac: "Ctrl-,"},
+		exec: function(editor) {
+			editor.showSettingsMenu();
+		},
+		readOnly: false
+	}]);
+    editor.setOption({
+   		enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        maxLines: 10,
+        minLines: 10,
+        autoScrollEditorIntoView: true,
+    });    
+
+    
+	$("#save").click( function(){
+		var text = new Blob([editor.getValue()], {type: "text/python;charset=utf-8"});
+		var file_name = $("#id_script_name").val();
+		saveAs(text, file_name+".py");
+    });
+    $("#run").click( function(){
+    	$('#id_script').val(editor.getValue());
+    });
 </script>
+<script src="./show_own_source.js"></script>
 {% endblock %}
