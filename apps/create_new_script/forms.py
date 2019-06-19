@@ -41,6 +41,9 @@ class GetProductDetailsForm(forms.Form):
                                                 sources',
                                                 validators=[
                                                     validate_product_sources])
+    script = forms.CharField(label='Script',
+                            widget=forms.HiddenInput())
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
