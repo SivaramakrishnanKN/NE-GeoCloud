@@ -1,15 +1,50 @@
-{% include 'material/includes/material_css.html' %}
-{% include 'material/includes/material_js.html' %}
-{% load material_form %}
-<!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-</head>
-<body>
-	<form>
-		<!-- {% form form=form %}{% endform %} -->
-		{{ form.as_p }}
-	</form>
-</body>
-</html>
+{% extends "default.html" %}
+
+{% block css %}
+<style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
+    #editor {
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+</style>
+{% endblock %}
+
+{% block javascript %}
+<script src="/static/assets/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col l6 offset-l3">
+			<div id="editor">
+
+
+
+
+
+				function foo(items) {
+			    var i;
+			    for (i = 0; i &lt; items.length; i++) {
+			        alert("Ace Rocks " + items[i]);
+			    }
+			}</div>
+		</div>
+	</div>
+</div>
+<script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/twilight");
+    editor.session.setMode("ace/mode/javascript");
+</script>
+
+{% endblock %}
