@@ -2,17 +2,17 @@
 
 {% block css %}
 <style type="text/css" media="screen">
-    body {
-        overflow: hidden;
-    }
-    #editor {
-        margin: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-    }
+    .ace_editor {
+		position: relative !important;
+		border: 1px solid lightgray;
+		margin: auto;
+		height: 80vh;
+		width: 80%;
+	}
+	.scrollmargin {
+		height: 100px;
+        text-align: center;
+	}
 </style>
 {% endblock %}
 
@@ -20,31 +20,30 @@
 <script src="/static/assets/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 
+
 {% endblock %}
 
 {% block content %}
+
 <div class="container">
 	<div class="row">
 		<div class="col l6 offset-l3">
-			<div id="editor">
-
-
-
-
-
-				function foo(items) {
-			    var i;
-			    for (i = 0; i &lt; items.length; i++) {
-			        alert("Ace Rocks " + items[i]);
-			    }
-			}</div>
+			{{ form.as_p }}
+		</div>
+		<div id="editor" class="col l6 offset-l3">function foo(items) {
+    var i;
+    for (i = 0; i &lt; items.length; i++) {
+        alert("Ace Rocks " + items[i]);
+    }
+}
 		</div>
 	</div>
 </div>
+
 <script>
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/twilight");
     editor.session.setMode("ace/mode/javascript");
+    editor.resize();
 </script>
-
 {% endblock %}
