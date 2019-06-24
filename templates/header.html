@@ -28,13 +28,13 @@
       <li class="divider"></li>
     {% endfor %}
     {% for app_group, grouped_apps in app_groups.items %}
-    
+
         {% for app in grouped_apps %}
             <li>
               <a href="/{{ app.id }}/region_selection">{{ app.name }}</a>
             </li>
         {% endfor %}
-     
+
     {% endfor %}
     <li>
         <a href="/create_new_script">Create New Script</a>
@@ -63,7 +63,7 @@
 
                 <li><a href="/" class=" white-text">Home</a></li>
                 <li class="divider-vertical visible-lg visible-md"></li>
-                
+
                 <li><a class="dropdown-trigger white-text "  data-target="dropdown-dc_manager">Data Cube Manager<i class="material-icons right">arrow_drop_down</i></a></li>
                 <li><a class="dropdown-trigger white-text"  data-target="dropdown-tools">Applications<i class="material-icons right">arrow_drop_down</i></a></li>
 
@@ -72,7 +72,7 @@
                 <li><a target="_blank" class=" white-text"><i class="material-icons left">account_circle</i>{{ user.username }}</a>
                 </li>
                 <li>
-                    <a href="{% url 'logout' %}?next=/" class="white-text"></span> Logout</a>
+                    <a href="{% url 'logout' %}?next=/"><span class="white-text"></span> Logout</a>
                 </li>
                 {% else %}
                 <li>
