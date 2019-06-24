@@ -191,6 +191,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '/static/'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 STATICFILES_DIRS = [
     '/home/' + LOCAL_USER + '/Datacube/NE-GeoCloud/static',
 ]

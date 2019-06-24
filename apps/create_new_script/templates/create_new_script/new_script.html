@@ -31,25 +31,30 @@
 {% block content %}
 
 <div class="container">
-	<div class="row">
-		<div class="col l6 offset-l3 card">
-			<h4 class="center-align">Enter the Application Details</h4>
-			<form method="POST">
-				{{ form.as_p }}
-			</form>
+	<form action="{% url 'output' %}" enctype="multipart/form-data" method="post">
+		{% csrf_token %}
+		<div class="row">
+			<div class="col l6 offset-l3 card">
+				<h4 class="center-align">Enter the Application Details</h4>
+				
+					{{ form.as_p }}
+				
+			</div>
+			<div id="editor" class="col l6 offset-l3">import datacube
+		}
+	dc = datacube.Datacube('/home/localuser/.datacube.conf')
+	#Enter you code from here
+			<p id="scrp"></p>
+			</div>
+			
 		</div>
-		<div id="editor" class="col l6 offset-l3">import datacube
-dc = datacube.Datacube('/home/localuser/.datacube.conf')
-#Enter you code from here
+		<div class="row right-align">
+			<div class="col l6 offset-l3">
+				<button id="run" type="submit" class="waves-effect btn red white-text">Run</button>
+				<button id="save" class="waves-effect btn">Save</button>
+			</div>
 		</div>
-		
-	</div>
-	<div class="row right-align">
-		<div class="col l6 offset-l3">
-			<button id="run" class="waves-effect btn" onclick="">Run</button>
-			<button id="save" class="waves-effect btn">Save</button>
-		</div>
-	</div>
+	</form>
 </div>
 
 <script>
@@ -81,9 +86,6 @@ dc = datacube.Datacube('/home/localuser/.datacube.conf')
 		var text = new Blob([editor.getValue()], {type: "text/python;charset=utf-8"});
 		var file_name = $("#id_script_name").val();
 		saveAs(text, file_name+".py");
-    });
-    $("#run").click( function(){
-    	$('#id_script').val(editor.getValue());
     });
 </script>
 <script src="./show_own_source.js"></script>
