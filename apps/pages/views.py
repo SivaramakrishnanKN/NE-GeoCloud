@@ -6,7 +6,10 @@ from django.utils.translation import ugettext as _
 from django.core.mail import send_mail
 
 from . import forms
-
+from apps.dc_algorithm.models import Area, Application, ApplicationGroup
+# import sys
+# sys.path.insert(0, '/home/localuser/Datacube/NE-GeoCloud/apps/dc_algorithm')
+# import context_processors.apps
 
 def home(request):
     """
@@ -64,3 +67,16 @@ def submit_feedback(request):
                 return redirect(next)
             context['next'] = next
         return render(request, 'submit_feedback.html', context)
+
+
+def applications(request):
+
+    context = {
+        'apps': Application.objects.all(),
+        'app_groups': {
+            application_group.name: Application.objects.filter(application_group=application_group)
+            for application_group in ApplicationGroup.objects.all()
+        }
+    }
+    return render(request, 'applications.html', context)
+

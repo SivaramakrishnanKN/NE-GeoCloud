@@ -4,13 +4,13 @@
 {% block content %}
   
 
-  <div id="index-banner" class="parallax-container">
+  <!-- <div id="index-banner" class="parallax-container">
     <div class="section no-pad-bot">
       <div class="container">
         <br><br>
         <h1 class="header center teal-text text-lighten-4">North Eastern Space Application Centre</h1>
         <div class="row center">
-          <h5 class="header col s12 light">A platform for GeoSpatial applications using Datacubes</h5>
+          <h5 class="header col s12 light">A cloud-based platform for spatial big data analytics built on Data Cubes</h5>
         </div>
         <br><br>
         {% if not user.is_authenticated %}
@@ -27,13 +27,72 @@
     <div class="parallax">
       <img src="/static/assets/images/ISRO.jpg" alt="Unsplashed background img 1">
     </div>
+  </div> -->
+
+
+<!-- <div id = 'main-container' class = 'z-depth-1'> -->
+
+  <div id="index-banner" class="section no-pad-bot">
+    <div class="container">
+      <h2 class='header center light-blue-text' style = 'font-weight: 500'>North Eastern Space Application Center</h2>
+      <hr class = 'hr1'>
+      <div class = 'row center'>
+        <h5 id = "tagline" class = 'header col s12'>A cloud-based platform for spatial big data analytics built on Data Cubes.</h5>
+      </div>
+    </div>  
+  </div>  
+
+  <div class = 'section grey lighten-3'>
+    <div class='container' id='features-container'>            
+      <h4 class='header center grey-text text-darken-4' style = 'font-weight: 500;'> Features </h4>
+      <br>
+      <div class="row">
+        <div class="col s12 m6 l4">
+          <div class="card hoverable">
+            <div class="card-image waves-effect waves-light">
+              <a href = '/data_cube_manager/visualization'> <img src="/static/assets/images/background3.jpg"> <span class="card-title">Datacube Manager</span>
+              </a>              
+            </div>
+            <div class="card-content">
+              <p>Visualize the ingested data in a Datacube format, or create new dataset types and ingestion configurations.</p>
+            </div>          
+          </div>
+        </div>
+
+        <div class="col s12 m6 l4">
+          <div class="card hoverable">
+            <div class="card-image waves-effect waves-light">
+              <a href = '/applications'> 
+              <img src="/static/assets/images/14.25,12.75,14.5,13.png" class = 'adjusted-image'>
+              <span class="card-title" style = 'color: #333333;'>Applications</span>
+            </a>
+            </div>
+            <div class="card-content">
+              <p>Run pre-designed common sattelite applications on both user-defined and common ingested data.</p>
+            </div>            
+          </div>
+        </div>
+
+        <div class="col s12 m6 l4">
+          <div class="card hoverable">
+            <div class="card-image waves-effect waves-light">
+              <a href = '/create_new_script'> <img src="/static/assets/images/background2.jpg" class = 'adjusted-image'> <span class="card-title">Custom Scripts and Documentation</span>
+              </a>
+              
+            </div>
+            <div class="card-content">
+              <p>Learn how to use Datacubes and upload your own custom scripts to work with the platform.</p>
+            </div>            
+          </div>
+        </div>
+      </div>  
+    </div>
   </div>
 
+  <!-- <div class="container ">
+    <div class="section grey lighten-4">
 
-  <div class="container ">
-    <div class="section teal lighten-2">
-
-      <!--   Icon Section   -->
+      
       <div class="row">
         <div class="col s12 m4">
           <div class="icon-block">
@@ -64,10 +123,10 @@
       </div>
 
     </div>
-  </div>
+  </div> -->
 
 
-  <div class="parallax-container valign-wrapper">
+  <!-- <div class="parallax-container valign-wrapper">
     <div class="section no-pad-bot">
       <div class="container">
         <div class="row center">
@@ -103,10 +162,10 @@
       </div>
 
     </div>
-  </div>
+  </div> -->
 
 
-  <div class="parallax-container valign-wrapper">
+  <!-- <div class="parallax-container valign-wrapper">
     <div class="section no-pad-bot">
       <div class="container">
         <div class="row center">
@@ -116,8 +175,9 @@
     </div>
     <div class="parallax"><img src="/static/assets/images/ISRO.jpg" alt="Unsplashed background img 3"></div>
   </div>
-
-  <footer class="page-footer teal">
+</div>
+ -->
+  <footer class="page-footer light-blue darken-3">
     <div class="container">
       <div class="row">
         <div class="col l6 s12">
@@ -147,12 +207,9 @@
       </div>
     </div>
     <div class="footer-copyright">
-      <div class="container">
-      Made by <a class="brown-text text-lighten-3" href="http://materializecss.com">Materialize</a>
-      </div>
     </div>
   </footer>
-
+<!-- </div> -->
 
 
 {% endblock %}

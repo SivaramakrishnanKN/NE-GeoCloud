@@ -1,0 +1,44 @@
+{% extends "default.html" %}
+
+{% block content %}
+
+<div class = 'container' id = 'applications-container'>
+	<br><br>
+	<h3 class = 'header grey-text text-darken-4' id = 'applications-heading'> Applications </h3>
+	<div class = 'row' style = 'margin-left: 35px;'>Run pre-defined algorithms on ingested satellite data.
+	</div>	
+	<br><br>
+	<div class = 'row'>
+
+		{% for app in apps %}
+			<div class="col s12 m6 l4">
+			    <div class="card hoverable">
+			      <div class="card-image waves-effect waves-light">
+			        <a href = '/{{ app.id }}/region_selection'> <img src="/static/assets/images/background3.jpg">
+			        
+			        <p class="card-title-2">{{ app.name }}</p>				        		        
+			        </a>              			        
+			      </div>
+			        
+			    </div>
+		  	</div>
+		{% endfor %}
+
+					<!-- <div class="col s12 m6 l4">
+					    <div class="card hoverable">
+					      <div class="card-image waves-effect waves-light">
+					        <a href = '/cloud_coverage/region_selection'> <img src="/static/assets/images/background3.jpg"> <span class="card-title">Test</span>
+					        </a>              
+					      </div>
+					      <div class="card-content">
+					        <p>Visualize the ingested data in a Datacube format, or create new dataset types and ingestion configurations.</p>
+					      </div>          
+					    </div>
+					  </div> -->
+				  
+	</div>
+</div>
+
+
+
+{% endblock %}

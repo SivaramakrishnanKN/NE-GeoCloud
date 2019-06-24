@@ -36,9 +36,7 @@
         {% endfor %}
      
     {% endfor %}
-    <li>
-        <a href="/create_new_script">Create New Script</a>
-    </li>
+    
 </ul>
 
 <ul id="dropdown-dc_manager" class="dropdown-content">
@@ -50,9 +48,9 @@
 </ul>
 
 <div class="navbar-fixed">
-    <nav class="teal">
+    <nav class="light-blue">
         <div class="nav-wrapper">
-            <a id="logo-container" href="/" class="brand-logo white-text">NE-GeoCloud</a>
+            <a id="logo-container" href="/" class="brand-logo white-text ml-2">NE-GeoCloud</a>
             <ul id="nav-mobile" class="sidenav ">
             <li><a href="#">Navbar Link</a></li>
             </ul>
@@ -65,9 +63,12 @@
                 <li class="divider-vertical visible-lg visible-md"></li>
                 
                 <li><a class="dropdown-trigger white-text "  data-target="dropdown-dc_manager">Data Cube Manager<i class="material-icons right">arrow_drop_down</i></a></li>
-                <li><a class="dropdown-trigger white-text"  data-target="dropdown-tools">Applications<i class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a href='/applications' class="white-text">Applications</a></li>
+               
+                <li>
+                <a href="/create_new_script" class='white-text'>Create New Application</a>
+                </li>
 
-                <li class="visible-lg visible-md visible-xs " ><a href="/submit_feedback" class="white-text">Submit Feedback</a></li>
                 {% if user.is_authenticated %}
                 <li><a target="_blank" class=" white-text"><i class="material-icons left">account_circle</i>{{ user.username }}</a>
                 </li>

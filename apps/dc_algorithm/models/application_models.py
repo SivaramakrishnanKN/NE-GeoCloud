@@ -204,7 +204,6 @@ class Application(models.Model):
     name = models.CharField(max_length=250, default="")
     areas = models.ManyToManyField(Area)
     satellites = models.ManyToManyField(Satellite)
-
     color_scale = models.CharField(max_length=250, default="", blank=True, null=True)
 
     application_group = models.ForeignKey('ApplicationGroup', null=True, blank=True)

@@ -27,6 +27,7 @@ from django.apps import apps
 from apps.data_cube_manager import models
 from apps.dc_algorithm import forms
 
+from .models import Area, Application, ApplicationGroup
 
 class Parameter:
     name = None
@@ -113,3 +114,4 @@ class GetIngestedAreas(View):
         }
 
         return JsonResponse(ingested_area_details)
+

@@ -3,6 +3,65 @@
  * Copyright 2014-2017 Materialize
  * MIT License (https://raw.githubusercontent.com/Dogfalo/materialize/master/LICENSE)
  */
+
+
+#index-banner {
+
+}
+
+#main-container {
+  margin: 0 auto;
+  width: 80vw;
+  background-color: #f4f4f4;
+
+}
+
+#applications-container {
+  width:80vw;
+  background-color: #ffffff;
+  height: 100vh;
+  margin-top: -40px;
+}
+
+#applications-heading {
+  font-weight: 500;
+  border-left: 10px solid #03a9f4;
+  padding-left: 25px;
+}
+
+#features-container{
+  width:80vw;
+}
+
+.adjusted-image {
+  height: 198.17px;
+}
+
+#tagline {
+  /*border-left: 6px solid #03a9f4;
+  border-right: 6px solid #03a9f4;*/
+}
+
+
+
+.hr1 {
+  width:80%;
+  border-top: 1px solid #cccccc ;
+}
+
+.card {
+  margin-left: 20px; 
+  margin-right: 20px;
+}
+
+.ml-1 {
+  margin-left: 10px;
+}
+
+.ml-2 {
+  margin-left: 20px;
+}
+
 .materialize-red {
   background-color: #e51c23 !important;
 }
@@ -3436,6 +3495,8 @@ table span.badge {
   width: 100%;
 }
 
+
+
 @media only screen and (min-width: 601px) {
   .container {
     width: 100%;
@@ -4336,6 +4397,8 @@ nav .brand-logo {
   display: inline-block;
   font-size: 2.1rem;
   padding: 0;
+  font-family: Roboto;
+  font-weight: 700
 }
 
 nav .brand-logo.center {
@@ -4753,11 +4816,13 @@ small {
   transition: box-shadow .25s;
   transition: box-shadow .25s, -webkit-box-shadow .25s;
   border-radius: 2px;
+/*  height: 270px;*/
 }
 
 .card .card-title {
   font-size: 24px;
-  font-weight: 300;
+  font-weight: 400;
+  padding-top: 20px;
 }
 
 .card .card-title.activator {
@@ -4863,6 +4928,9 @@ small {
 
 .card .card-image {
   position: relative;
+  /*Added later*/
+  /*height: 198.17px;
+  overflow: hidden;*/
 }
 
 .card .card-image img {
@@ -4874,6 +4942,15 @@ small {
   top: 0;
   bottom: 0;
   width: 100%;
+  /*overflow: auto;
+  height: 198.17px;*/
+}
+
+/*Added to manually adjust card image sizes*/
+.card-image {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
 }
 
 .card .card-image .card-title {
@@ -4883,6 +4960,16 @@ small {
   left: 0;
   max-width: 100%;
   padding: 24px;
+}
+
+.card .card-image .card-title-2 {
+  color: #333333;
+  font-weight: 500;
+  font-size: 22px;
+  bottom: 0;
+  left: 0;
+  max-width: 100%;
+  padding-left: 24px;
 }
 
 .card .card-content {
@@ -5254,7 +5341,7 @@ small {
 .btn, .btn-large, .btn-small {
   text-decoration: none;
   color: #fff;
-  background-color: #26a69a;
+  background-color: #03a9f4;
   text-align: center;
   letter-spacing: .5px;
   -webkit-transition: background-color .2s ease-out;
@@ -5565,7 +5652,7 @@ button.btn-floating {
 
 .dropdown-content li {
   clear: both;
-  color: rgba(0, 0, 0, 0.87);
+  color: #03a9f4; 
   cursor: pointer;
   min-height: 50px;
   line-height: 1.5rem;
@@ -5588,7 +5675,7 @@ button.btn-floating {
 
 .dropdown-content li > a, .dropdown-content li > span {
   font-size: 16px;
-  color: #26a69a;
+  color: #03a9f4;
   display: block;
   line-height: 22px;
   padding: 14px 16px;
