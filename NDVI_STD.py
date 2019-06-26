@@ -168,10 +168,10 @@ import seaborn as sns
 from utils.data_cube_utilities.dc_mosaic import ls7_unpack_qa
 
 #Make a Clean Mask to remove clouds and scanlines
-mask = ls7_unpack_qa(dataset.pixel_qa, "clear")
+#mask = ls7_unpack_qa(dataset.pixel_qa, "clear")
 
 #Filter the scenes with that clean mask
-dataset = dataset.where(mask)
+#dataset = dataset.where(mask)
 
 
 # <hr>  
