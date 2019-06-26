@@ -63,7 +63,7 @@
                 <p>The regions visualized on the map represent the various Data Cubes that are present and ingested on the system.</p>
                 <form action="" method="POST">
                     <div id="areaList" style="overflow:hidden;">
-                                
+
                                 </div>
                     <ul class="collapsible popout" >
                     {% for f in form %}
@@ -71,30 +71,30 @@
                         <li>
                             <div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}}</div>
                             <div class="collapsible-body">
-                                      
-                                {{ f.as_p }}  
-                            </div>                            
+
+                                {{ f.as_p }}
+                            </div>
                         </li>
-                    {% endfor %}          
+                    {% endfor %}
                     </ul>
                     <div class="range-field">
                       <label for="hyperparameter_1">Hyperparameter 1</label>
-                          <input type="range" id="hyperparameter_1" min="0" max="100">                
+                          <input type="range" id="hyperparameter_1" min="0" max="100">
                     </div>
                     <div class="range-field">
                       <label for="hyperparameter_1">Hyperparameter 2</label>
-                          <input type="range" id="hyperparameter_2" min="0" max="100">                
+                          <input type="range" id="hyperparameter_2" min="0" max="100">
                     </div>
                     <div class="range-field">
                       <label for="hyperparameterl_1">Hyperparameter 3</label>
-                          <input type="range" id="hyperparameter_3" min="0" max="100">                
+                          <input type="range" id="hyperparameter_3" min="0" max="100">
                     </div>
 
-                    
+
 
                 </form>
             </div>
-        </div>        
+        </div>
         <div class="col l9">
             <div id="map-canvas" class="map">
                 <div id="map" style="height: 93vh; width:100%"></div>
@@ -113,7 +113,7 @@
                             <div id="info_map" class="card col s8" style="height: 50vh"></div>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
             <div class="modal-footer">
@@ -147,7 +147,7 @@
 
       // Map related functionality - generate two leaflet maps, one for the modal and one for the main view.
       osm = new L.TileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'  
+  attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
       });
 
       info_osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -155,16 +155,47 @@
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
       });
 
-      
+
       map = new L.Map('map', {
         minZoom: 3,
         maxZoom: 6,
         zoomSnap: 0.25,
       });
       info_map = new L.Map('info_map', {
-        zoomSnap: 0.25
+        zoomSnap: 0.25,
       });
-      
+      var drawnItems = new L.FeatureGroup();
+     info_map.addLayer(drawnItems);
+     var drawControl = new L.Control.Draw({
+         draw: {
+             polygon: false,
+             marker: false,
+             circle: false,
+             polyline: false
+         },
+         edit: {
+             featureGroup: drawnItems
+         }
+     });
+     info_map.addControl(drawControl);
+     info_map.on('draw:created', function (e) {
+
+    var type = e.layerType,
+        layer = e.layer;
+
+    if (type === 'rectangle') {
+        layer.on('mouseover', function() {
+            var coordinates = layer.getLatLngs().slice();
+            alert(coordinates[0][1]);
+        });
+    }
+
+    drawnItems.addLayer(layer);
+
+});
+
+
+
       map.addLayer(osm);
       info_map.addLayer(info_osm);
     map.setView([0, 0], 3);
@@ -350,6 +381,7 @@
   });
 
   // Display the modal equivalent with data for the DIV.
+
   function displayModal(id, key, index) {
     var query_string = jQuery.param(ingestion_data[key][index]);
     var additional_information = `
@@ -360,7 +392,7 @@
         <dt style="text-align:left;">Product: <a style="text-align:right;">` + ingestion_data[key][index]['product'] + `</a></dt>
         <br>
         <dt style="text-align:left;">Min Latitude: <a style="text-align:right;">` + ingestion_data[key][index]['latitude_min'] + `</a></dt>
-        <br>        
+        <br>
         <dt style="text-align:left;">Max Latitude: <a style="text-align:right;">` + ingestion_data[key][index]['latitude_max'] + `</a></dt>
         <br>
         <dt style="text-align:left;">Min Longitude: <a style="text-align:right;">` + ingestion_data[key][index]['longitude_min'] + `</a></dt>
@@ -374,10 +406,11 @@
         <dt style="text-align:left;">Scene Count: <a style="text-align:right;">` + ingestion_data[key][index]['scene_count'] + `</a></dt>
         <br>
         <dt style="text-align:left;">Pixel Count: <a style="text-align:right;">` + ingestion_data[key][index]['pixel_count'] + `</a></dt>
-        <br>      
+        <br>
       </dl>
-    </div>    
+    </div>
     `;
+
     jQuery("#info_table").html(additional_information);
     $("#info_modal").modal('open');
     // horrid hack since the map needs to be initialized when the modal is loaded.
@@ -390,11 +423,11 @@
           }
         });
 
+
         info_map.fitBounds([
           [ingestion_data[key][index]['latitude_min'], ingestion_data[key][index]['longitude_min']],
           [ingestion_data[key][index]['latitude_max'], ingestion_data[key][index]['longitude_max']]
         ], {padding: [50, 50]});
-
         var rectangle = L.rectangle([
           [ingestion_data[key][index]['latitude_min'], ingestion_data[key][index]['longitude_min']],
           [ingestion_data[key][index]['latitude_min'], ingestion_data[key][index]['longitude_max']],
@@ -404,9 +437,15 @@
           color: unHighlightLayer
         });
 
+
+
+
+
         // Add rectangle to map in the modal popup.
         rectangle.addTo(info_map);
+
     }, 250);
+
 
   }
 
@@ -482,6 +521,7 @@
   function hide_dialog_modal() {
       jQuery("#dialog_modal").modal('hide');
   }
+
 
 </script>
 {% endblock %}
