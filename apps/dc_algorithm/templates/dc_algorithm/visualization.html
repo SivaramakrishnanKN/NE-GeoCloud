@@ -113,12 +113,22 @@
                             <div id="info_map" class="card col s8" style="height: 50vh"></div>
                         </div>
                     </div>
-
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Submit</button>
-            </div>
+    		<form method='POST' action='{% url "output2" %}'>
+    		{% csrf_token %}        
+	            <div class="modal-footer">
+	            	<input type="hidden" id='lat_min'  name='lat_min' />
+	            	<input type="hidden" id='lat_max'  name='lat_max' />
+	            	<input type="hidden" id='long_min' name='long_min' />
+	            	<input type="hidden" id='long_max' name='long_max' />
+	            	<input type="hidden" id='platform' name='platform' />
+	            	<input type="hidden" id='product'  name='product' />
+	            	<input type="hidden" id='start_date' name='start_date' />
+	            	<input type="hidden" id='end_date' name='end_date' />
+		            <button type="submit" class="btn btn-danger" id="submit" data-dismiss="modal">Submit</button>
+		        </div>
+	        </form>
         </div>
     </div>
 
@@ -133,6 +143,19 @@
   var unHighlightDiv = '#ffffff';
   var highlightLayer = '#ff0000';
   var unHighlightLayer = '#ff0000';
+  var ingestion_data = undefined;
+  var obj = {}
+  function load_ingested_areas() {
+    jQuery.get('{% url "get_ingested_areas" %}', {}, function(result) {
+        if(result.status == "ERROR") {
+          set_modal_content("Error", result.message);
+          return;
+        } else {
+          ingestion_data = result
+          add_ingested_areas(ingestedAreaLayerGroups, ingestion_data);
+        }
+    });
+  }
 
   $(function() {
       $('.datepicker').datepicker({
@@ -166,6 +189,7 @@
       });
       var drawnItems = new L.FeatureGroup();
      info_map.addLayer(drawnItems);
+     var bounds = [[7.74554387426788, -3.51367040230697], [9.6171837687319, 1.42886029092127]];
      var drawControl = new L.Control.Draw({
          draw: {
              polygon: false,
@@ -185,10 +209,29 @@
 
     if (type === 'rectangle') {
         layer.on('mouseover', function() {
-            var coordinates = layer.getLatLngs().slice();
-            alert(coordinates[0][1]);
+            var coordinates = layer.getLatLngs();
+            var numbers = /[+-]?\d+(?:\.\d+)?/g;
+            var coords_arr = [];
+            var i=0;
+            while (i<8) {
+                  coords_arr[i]=numbers.exec(coordinates);
+                  i++;
+                }
+
+            if((coords_arr[0]<ingestion_data[key][0]['latitude_min'])||(coords_arr[1]<ingestion_data[key][0]['longitude_min'])||(coords_arr[2]>ingestion_data[key][0]['latitude_max'])||(coords_arr[5]>ingestion_data[key][0]['longitude_max'])){
+              alert("Please limit within the ingested area which is highlighted as the red one.");
+              info_map.removeLayer(layer);
+            }
+
+            obj['lat_min'] = coords_arr[0];
+            obj['long_min'] = coords_arr[1];
+            obj['lat_max'] = coords_arr[2];
+            obj['long_max'] = coords_arr[5];
+
+
         });
     }
+
 
     drawnItems.addLayer(layer);
 
@@ -215,18 +258,7 @@
 
   });
 
-  var ingestion_data = undefined;
-  function load_ingested_areas() {
-    jQuery.get('{% url "get_ingested_areas" %}', {}, function(result) {
-        if(result.status == "ERROR") {
-          set_modal_content("Error", result.message);
-          return;
-        } else {
-          ingestion_data = result
-          add_ingested_areas(ingestedAreaLayerGroups, ingestion_data);
-        }
-    });
-  }
+
 
   function update_shown_cubes(i) {
 
@@ -384,7 +416,12 @@
 
   function displayModal(id, key, index) {
     var query_string = jQuery.param(ingestion_data[key][index]);
+    obj['platform'] = key
+    obj['product'] = ingestion_data[key][index]['product']
+    obj['start_date'] = ingestion_data[key][index]['start_date']
+    obj['end_date'] = ingestion_data[key][index]['end_date']
     var additional_information = `
+
     <div class="card col l12" style="overflow:auto; max-height: 50vh;">
       <dl>
         <dt style="text-align:left;">Satellite: <a style="text-align:right;">` + key.replace('_', ' ') + `</a></dt>
@@ -409,6 +446,8 @@
         <br>
       </dl>
     </div>
+    
+
     `;
 
     jQuery("#info_table").html(additional_information);
@@ -522,6 +561,57 @@
       jQuery("#dialog_modal").modal('hide');
   }
 
+  function submitForm(){
+    var data = obj;
+    $("#lat_min").val(data['lat_min']);
+    $("#lat_max").val(data['lat_max']);
+    $("#long_min").val(data['long_min']);
+    $("#long_max").val(data['long_max']);
+    $("#product").val(data['product']);
+    $("#platform").val(data['platform']);
+    $("#start_date").val(data['start_date']);
+    $("#end_date").val(data['end_date']);
+    // $.post("{% url 'output2' %}", data, function(response){
+    //     if(response === 'success'){ alert('Yay!'); }
+    //     else{ alert('Error! :('); }
+    // });
+
+  //   $.ajax({
+  //   	type: 'POST',
+  //   	dataType: "json",
+  //   	url: '{% url "output2" %}',
+  //   	csrfmiddlewaretoken: '{{ csrf_token }}',
+  //   	data:{ json_data: JSON.stringify(
+  //   		{
+	 //    		lat_min: data['lat_min'],
+	 //    		lat_max: data['lat_max'],
+	 //    		long_min: data['long_min'],
+	 //    		long_max: data['long_max'],
+	 //    		platform: data['platform'],
+	 //    		product: data['product'],
+	 //    		start_date: data['start_date'],
+	 //    		end_date: data['end_date'],
+	    		
+	 //    	}
+	 //    	)
+  //   	},
+  //   	success : function(json){
+  //   		alert("pls");
+  //   	},
+  //   	error : function(xhr,errmsg,err){
+  //   		alert('fucc u: ' + xhr.status + ": " + xhr.responseText);
+  //   	}
+  //   });
+  	}
+
+
+
+
+  $(document).ready(function(){
+    $('#submit').click(function(){
+        submitForm();
+    });
+  });
 
 </script>
 {% endblock %}

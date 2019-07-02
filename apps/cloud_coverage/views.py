@@ -20,6 +20,11 @@
 # under the License.
 
 from apps.dc_algorithm.views import DataCubeVisualization, GetIngestedAreas
+from django.shortcuts import render
+from django.views import View
+import json
+import os
+import subprocess
 
 
 class DataCubeVisualization(DataCubeVisualization):
@@ -35,3 +40,37 @@ class DataCubeVisualization(DataCubeVisualization):
 class GetIngestedData(GetIngestedAreas):
 
     pass
+
+class OutputView(View):
+    def post(self, request):
+
+        if request.method == 'POST':
+            lat_min = request.POST.get('lat_min')
+            lat_max = request.POST.get('lat_max')
+            long_min = request.POST.get('long_min')
+            long_max = request.POST.get('long_max')
+            product = request.POST.get('product')
+            platform = request.POST.get('platform')
+            start_date = request.POST.get('start_date')
+            end_date = request.POST.get('end_date') 
+            
+            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/apps/cloud_coverage/cloud_coverage.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date 
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            out, err = p.communicate()
+            context = {
+                        'lat_min': lat_min,
+                        'lat_max': lat_max,
+                        'long_min': long_min,
+                        'long_max': long_max,
+                        'product': product,
+                        'platform': platform,
+                        'start_date': start_date,
+                        'end_date': end_date,
+                        'out' : out,
+                        'err' : err
+            }
+            return render(request, 'cloud_coverage/output.html', context)
+            
+        else:
+            return HttpResponseBadRequest('Only POST requests are allowed')
+    
