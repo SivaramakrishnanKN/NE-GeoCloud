@@ -54,7 +54,7 @@ class OutputView(View):
             start_date = request.POST.get('start_date')
             end_date = request.POST.get('end_date') 
             
-            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/apps/cloud_coverage/cloud_coverage.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date 
+            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/cloud_coverage.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date 
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             out, err = p.communicate()
             context = {

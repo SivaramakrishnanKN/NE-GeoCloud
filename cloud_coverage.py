@@ -7,7 +7,7 @@ netCDF_products = list_of_products[list_of_products['format'] == 'NetCDF']
 print(netCDF_products)
 
 
-from .utils.data_cube_utilities import data_access_api as dc_api  
+import utils.data_cube_utilities.data_access_api as dc_api  
 api = dc_api.DataAccessApi(config = '/home/localuser/.datacube.conf')
 
 platform = "LANDSAT_7"
@@ -43,11 +43,11 @@ print(longitude_extents)
 from utils.data_cube_utilities.dc_display_map import display_map
 display_map(latitude = latitude_extents, longitude = longitude_extents)
 
-landsat_dataset = dc.load(latitude = (sys(argv[1]), sys(argv[2])),
-                          longitude = (sys(argv[3]), sys(argv[4])),
-                          platform = sys(argv[6]),
-                          time = (sys(argv[7]), sys(argv[8])),
-                          product = sys(argv[5]),
+landsat_dataset = dc.load(latitude = (sys.argv[1], sys.argv[2]),
+                          longitude = (sys.argv[3], sys.argv[4]),
+                          platform = sys.argv[6],
+                          time = (sys.argv[7], sys.argv[8]),
+                          product = sys.argv[5],
                           measurements = ['red', 'green', 'blue', 'nir', 'swir1', 'swir2', 'pixel_qa']) 
 print(landsat_dataset)
 

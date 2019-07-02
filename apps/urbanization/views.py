@@ -20,6 +20,11 @@
 # under the License.
 
 from apps.dc_algorithm.views import DataCubeVisualization, GetIngestedAreas
+from django.shortcuts import render
+from django.views import View
+import json
+import os
+import subprocess
 
 
 class DataCubeVisualization(DataCubeVisualization):
@@ -27,11 +32,45 @@ class DataCubeVisualization(DataCubeVisualization):
     """
     Create a Visualizer which shows all ingested data
     """
-    tool_name = 'Cloud Coverage'
-    tool_inputs = 3
-    tool_satellites = {'Landsat_5', 'Landsat_7', 'GPM'}
-
+    tool_name = 'Urbanization'
+    tool_inputs = 1
+    tool_satellites = ['All', 'LANDSAT_5', 'LANDSAT_7', 'LANDSAT_8']
+    tool_parameters = []
 
 class GetIngestedData(GetIngestedAreas):
 
     pass
+
+class OutputView(View):
+    def post(self, request):
+
+        if request.method == 'POST':
+            lat_min = request.POST.get('lat_min')
+            lat_max = request.POST.get('lat_max')
+            long_min = request.POST.get('long_min')
+            long_max = request.POST.get('long_max')
+            product = request.POST.get('product')
+            platform = request.POST.get('platform')
+            start_date = request.POST.get('start_date')
+            end_date = request.POST.get('end_date') 
+            
+            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/urbanization.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date 
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            out, err = p.communicate()
+            context = {
+                        'lat_min': lat_min,
+                        'lat_max': lat_max,
+                        'long_min': long_min,
+                        'long_max': long_max,
+                        'product': product,
+                        'platform': platform,
+                        'start_date': start_date,
+                        'end_date': end_date,
+                        'out' : out,
+                        'err' : err
+            }
+            return render(request, 'urbanization/output.html', context)
+            
+        else:
+            return HttpResponseBadRequest('Only POST requests are allowed')
+    
