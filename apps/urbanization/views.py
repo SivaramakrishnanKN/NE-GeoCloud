@@ -56,17 +56,18 @@ class OutputView(View):
             end_date = request.POST.get('end_date') 
             
             cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/urbanization.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            out, err = p.communicate()
-            image = "\"{% static 'assets/results/urbanization/false_color.png' %}\""
+            # p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            # out, err = p.communicate()
+            image = "\"{%  static 'assets/results/urbanization/false_color.png' %}\"" 
             
             result = {"image" : image,
                         "lat_min" : lat_min,
                         "lat_max" : lat_max,
                         "long_min" : long_min,
                         "long_max" : long_max,
-                        "out" : out,
-                        "err" : err}
+                        # "out" : out,
+                        # "err" : err
+                        }
             response = []
             response.append(result)
             # context = {

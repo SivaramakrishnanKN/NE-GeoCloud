@@ -264,7 +264,7 @@
       load_ingested_areas();
       initialize_map_listeners();
       // imageUrl = "{% static 'assets/results/urbanization/false_color.png' %}";
-      // imageBounds = [[8,8.5],[-3,-2.5]];
+      // imageBounds = [[8,-3.5],[8.5,-2.5]];
       // L.imageOverlay(imageUrl, imageBounds).addTo(map);
 
   });
@@ -608,21 +608,20 @@
            url: url,
            data: form.serialize(), // serializes the form's elements.
            dataType: "json",
-           async: false,
            success: function(response)
            {
               alert("Hi");
-              // alert(response[0].lat_min);
+              
               data = response[0];
               imageUrl = data.image;
-              imageBounds = [[data.lat_min, data.lat_max], [data.long_min, data.long_max]];
-              L.imageOverlay(imageUrl, imageBounds).addTo(map);
-              alert(data.out); // show response from the php script.
+              alert(imageUrl);
+              imageBounds = [[data.lat_min, data.long_min], [data.lat_max, data.long_max]];
+              L.imageOverlay(data.image, imageBounds).addTo(map);
+              //alert(data.out); // show response from the php script.
            },
            error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                alert("Status: " + data); 
-                alert("Error: " + errorThrown); 
-              
+                    alert("Status: " + data); 
+                    alert("Error: " + errorThrown); 
             }
          });
 
