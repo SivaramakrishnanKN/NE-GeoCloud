@@ -182,7 +182,7 @@ landsat_mosaic = median_mosaic(landsat_dataset)
 # In[12]:
 
 
-write_png_from_xr('Media/urbanization/cloud_free_mosaic.png', landsat_mosaic, ["red", "green", "blue"], scale = [(0,2000),(0,2000),(0,2000)])
+write_png_from_xr('static/assets/results/urbanization/cloud_free_mosaic.png', landsat_mosaic, ["red", "green", "blue"], scale = [(0,2000),(0,2000),(0,2000)])
 
 
 # <br>  
@@ -274,7 +274,7 @@ urbanization_dataset = ds_ndvi.merge(ds_ndwi).merge(ds_ndbi)
 # In[20]:
 
 
-write_png_from_xr('Media/urbanization/false_color.png', urbanization_dataset, ["NDBI", "NDVI", "NDWI"], scale = [(-1,1),(0,1),(0,1)])
+write_png_from_xr('static/assets/results/urbanization/false_color.png', urbanization_dataset, ["NDBI", "NDVI", "NDWI"], scale = [(-1,1),(0,1),(0,1)])
 
 
 # ![](diagrams/urbanization/false_color.png)

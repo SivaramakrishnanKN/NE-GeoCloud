@@ -22,6 +22,7 @@
 from apps.dc_algorithm.views import DataCubeVisualization, GetIngestedAreas
 from django.shortcuts import render
 from django.views import View
+from django.http import HttpResponse
 import json
 import os
 import subprocess
@@ -54,23 +55,34 @@ class OutputView(View):
             start_date = request.POST.get('start_date')
             end_date = request.POST.get('end_date') 
             
-            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/urbanization.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date 
+            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/urbanization.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             out, err = p.communicate()
-            context = {
-                        'lat_min': lat_min,
-                        'lat_max': lat_max,
-                        'long_min': long_min,
-                        'long_max': long_max,
-                        'product': product,
-                        'platform': platform,
-                        'start_date': start_date,
-                        'end_date': end_date,
-                        'out' : out,
-                        'err' : err
-            }
-            return render(request, 'urbanization/output.html', context)
+            image = "\"{% static 'assets/results/urbanization/false_color.png' %}\""
             
+            result = {"image" : image,
+                        "lat_min" : lat_min,
+                        "lat_max" : lat_max,
+                        "long_min" : long_min,
+                        "long_max" : long_max,
+                        "out" : out,
+                        "err" : err}
+            response = []
+            response.append(result)
+            # context = {
+            #             'lat_min': lat_min,
+            #             'lat_max': lat_max,
+            #             'long_min': long_min,
+            #             'long_max': long_max,
+            #             'product': product,
+            #             'platform': platform,
+            #             'start_date': start_date,
+            #             'end_date': end_date,
+            #             'out' : out,
+            #             'err' : err
+            # }
+            return HttpResponse(json.dumps(response))
+
         else:
             return HttpResponseBadRequest('Only POST requests are allowed')
     

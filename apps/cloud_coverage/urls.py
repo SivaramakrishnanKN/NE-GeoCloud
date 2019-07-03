@@ -28,5 +28,5 @@ urlpatterns = [
         name='region_selection'),
     url(r'get_ingested_data', views.GetIngestedData.as_view(),
         name='get_ingested_data'),
-    url(r'^output/$', views.OutputView.as_view(), name='output2'),
+    url(r'^output/$', views.OutputView.as_view(), name='output'),
 ]

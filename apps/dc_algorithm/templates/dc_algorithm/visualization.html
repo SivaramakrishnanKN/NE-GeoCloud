@@ -1,4 +1,5 @@
 {% extends "default.html" %} {% load bootstrap3 %}
+{% load static %}
 <!--
     Copyright 2016 United States Government as represented by the Administrator
     of the National Aeronautics and Space Administration. All Rights Reserved.
@@ -44,9 +45,13 @@
   $('.collapsible-header').on("click", function(){
     $("#id_start_date_1").val($("#hi").val());
   })
+
   $('.dropdown-trigger').dropdown();
   $('select').formSelect();
   $('.scrollspy').scrollSpy();
+  $('.modalselector').leanModal({
+      dismissible: false
+  );
   });
 
 </script>
@@ -115,7 +120,7 @@
                     </div>
                 </div>
             </div>
-    		<form method='POST' action='{% url "output2" %}'>
+    		<form method='POST' action='output/' id="form">
     		{% csrf_token %}        
 	            <div class="modal-footer">
 	            	<input type="hidden" id='lat_min'  name='lat_min' />
@@ -126,7 +131,7 @@
 	            	<input type="hidden" id='product'  name='product' />
 	            	<input type="hidden" id='start_date' name='start_date' />
 	            	<input type="hidden" id='end_date' name='end_date' />
-		            <button type="submit" class="btn btn-danger" id="submit" data-dismiss="modal">Submit</button>
+		            <button type="submit" class="btn btn-danger modal-close" id="submit" data-dismiss="modal">Submit</button>
 		        </div>
 	        </form>
         </div>
@@ -177,12 +182,14 @@
         noWrap: true,
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
       });
+      
+              
 
 
       map = new L.Map('map', {
         minZoom: 3,
-        maxZoom: 6,
-        zoomSnap: 0.25,
+        maxZoom: 12,
+        zoomSnap: 2,
       });
       info_map = new L.Map('info_map', {
         zoomSnap: 0.25,
@@ -204,6 +211,7 @@
      info_map.addControl(drawControl);
      info_map.on('draw:created', function (e) {
 
+    
     var type = e.layerType,
         layer = e.layer;
 
@@ -255,6 +263,9 @@
 
       load_ingested_areas();
       initialize_map_listeners();
+      // imageUrl = "{% static 'assets/results/urbanization/false_color.png' %}";
+      // imageBounds = [[8,8.5],[-3,-2.5]];
+      // L.imageOverlay(imageUrl, imageBounds).addTo(map);
 
   });
 
@@ -570,48 +581,63 @@
     $("#product").val(data['product']);
     $("#platform").val(data['platform']);
     $("#start_date").val(data['start_date']);
-    $("#end_date").val(data['end_date']);
-    // $.post("{% url 'output2' %}", data, function(response){
-    //     if(response === 'success'){ alert('Yay!'); }
-    //     else{ alert('Error! :('); }
-    // });
+    $("#end_date").val(data['end_date']);  
 
-  //   $.ajax({
-  //   	type: 'POST',
-  //   	dataType: "json",
-  //   	url: '{% url "output2" %}',
-  //   	csrfmiddlewaretoken: '{{ csrf_token }}',
-  //   	data:{ json_data: JSON.stringify(
-  //   		{
-	 //    		lat_min: data['lat_min'],
-	 //    		lat_max: data['lat_max'],
-	 //    		long_min: data['long_min'],
-	 //    		long_max: data['long_max'],
-	 //    		platform: data['platform'],
-	 //    		product: data['product'],
-	 //    		start_date: data['start_date'],
-	 //    		end_date: data['end_date'],
-	    		
-	 //    	}
-	 //    	)
-  //   	},
-  //   	success : function(json){
-  //   		alert("pls");
-  //   	},
-  //   	error : function(xhr,errmsg,err){
-  //   		alert('fucc u: ' + xhr.status + ": " + xhr.responseText);
-  //   	}
-  //   });
   	}
+  var form = $('#form');
+
+  form.submit(function(e) {
+    submitForm();
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+
+    var url = form.attr('action');
+
+    var formData = {
+         'lat_min' :  $("#lat_min").val(),
+         'lat_max' :  $("#lat_max").val(),
+         'long_min' :  $("#long_min").val(),
+          'long_max':  $("#long_max").val(),
+          'product':  $("#product").val(),
+          'platform':  $("#platform").val(),
+          'start_date':  $("#start_date").val(),
+          'end_date':  $("#end_date").val()
+        };
+
+    $.ajax({
+           type: form.attr('method'),
+           url: url,
+           data: form.serialize(), // serializes the form's elements.
+           dataType: "json",
+           async: false,
+           success: function(response)
+           {
+              alert("Hi");
+              // alert(response[0].lat_min);
+              data = response[0];
+              imageUrl = data.image;
+              imageBounds = [[data.lat_min, data.lat_max], [data.long_min, data.long_max]];
+              L.imageOverlay(imageUrl, imageBounds).addTo(map);
+              alert(data.out); // show response from the php script.
+           },
+           error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                alert("Status: " + data); 
+                alert("Error: " + errorThrown); 
+              
+            }
+         });
+
+
+});
 
 
 
 
-  $(document).ready(function(){
-    $('#submit').click(function(){
-        submitForm();
-    });
-  });
+  // $(document).ready(function(){
+  //   $('#submit').click(function(){
+  //       submitForm();
+
+  //   });
+  // });
 
 </script>
 {% endblock %}

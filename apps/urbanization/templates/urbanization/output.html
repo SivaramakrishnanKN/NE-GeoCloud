@@ -1,6 +1,5 @@
 {% extends "default.html" %}
-
-
+{% load static %}
 {% block css %}
 {% endblock %}
 
@@ -28,7 +27,8 @@
 			{{ err }}
 		{% endif %}
 		<div>
-			    <img class="materialboxed" width="650" src="file:///home/localuser/Datacube/NE-GeoCloud/Media/urbanization/false_color.png">
+			    <img src="{% static 'assets/results/urbanization/false_color.png' %}" alt="bg" class="img-responsive"/>
+			    <img src="{% static 'assets/results/urbanization/cloud_free_mosaic.png' %}" alt="bg" class="img-responsive"/>
 		</div>
 
 <!-- 		{{ platform }}
