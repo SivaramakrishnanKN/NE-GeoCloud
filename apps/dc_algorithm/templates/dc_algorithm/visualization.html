@@ -608,17 +608,15 @@
            url: url,
            data: form.serialize(), // serializes the form's elements.
            dataType: "json",
-           // async: false,
-           success: function(response)
-           {
+           cache : false,
+           async: false,
+           success: function(response){
               // alert(type);
-              alert("JI");
               data = response[0];
-              imageUrl = data.image;
-              alert(imageUrl);
+              imageUrl = data.image;  
               imageBounds = [[data.lat_min, data.long_min], [data.lat_max, data.long_max]];
               L.imageOverlay(imageUrl, imageBounds).addTo(map);
-              alert(data.out); // show response from the php script.
+              // alert(data.out); // show response from the php script.
            },
            error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + data); 

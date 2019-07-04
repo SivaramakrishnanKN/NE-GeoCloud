@@ -306,4 +306,3 @@ write_png_from_xr('static/assets/results/urbanization/false_color.png', urbaniza
 
 
 
-
