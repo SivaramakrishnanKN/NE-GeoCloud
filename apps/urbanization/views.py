@@ -26,6 +26,13 @@ from django.http import HttpResponse
 import json
 import os
 import subprocess
+import multiprocessing
+import gdal
+import numpy as np
+from PIL import Image
+import base64
+import gdal
+import math
 
 
 class DataCubeVisualization(DataCubeVisualization):
@@ -42,6 +49,66 @@ class GetIngestedData(GetIngestedAreas):
 
     pass
 
+def num2deg(xtile, ytile, zoom):
+  n = 2.0 ** zoom
+  lon_deg = xtile / n * 360.0 - 180.0
+  lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * ytile / n)))
+  lat_deg = math.degrees(lat_rad)
+  return (lat_deg, lon_deg)
+
+
+data = gdal.Open("/datacube/ingested_data/Modis_2001_2016/modis_2001_2016_ndvi_layer_stack.img")
+data_Array = data.ReadAsArray()
+
+
+gt=data.GetGeoTransform()
+
+long1 = np.full((906,873), gt[0])
+lat1 = np.full((906,873), gt[3])
+
+for i in range(1,873):
+  long1[:,i:]=long1[:,i:]+gt[1]
+   
+for i in range(1,906):
+   lat1[i:] = lat1[i:]+gt[5]
+
+ndvi = data_Array[0,:,:]
+test = [ndvi,lat1,long1]
+final = np.stack(test, axis=0)
+
+data_Array1 = np.std(data_Array[50:100,:,:], axis=0)#data_Array[100,:,:] - data_Array[0,:,:]
+new_arr = ((data_Array1 - 0) * (1/(data_Array1.max() - 0) * 255)).astype('uint8')# data_Array = data_Array[0,:256,:256]
+
+
+
+def tiling(request, z, x, y):
+    #data = np.zeros((h, w, 3), dtype=np.uint8)
+    
+  #   y=(2**int(z))-int(y)-1
+  #   print(y)
+  #   ullat,ullon= num2deg(int(x),y,int(z))
+  #   brlat,brlon= num2deg(int(x)+1,(y+1),int(z))
+  #   bbox = [ullat,ullon,brlat,brlon]
+  #   print("bbox 1: {}".format(bbox))
+    
+  #   bbox = [int((gt[3]-ullat)/-gt[5]),-1*int((gt[0]-ullon)/gt[1]),int((gt[3]-brlat)/-gt[5]),-1*int((gt[0]-brlon)/gt[1])]
+  # #  bbox = bbox.astype(int)
+  #   print("bbox2: {}".format(bbox))
+  #   #print("shape")
+  #   print(new_arr.shape)
+  #   if(bbox[0]>0 and bbox[1]>0 and bbox[2]>0 and bbox[3]>0):  
+  #     img = Image.fromarray(new_arr[bbox[0]:bbox[2],bbox[1]:bbox[3]])
+  #   # serialize to HTTP response
+  #     response = HttpResponse(content_type="image/png")
+  #     img.save(response, "PNG")
+
+      response = HttpResponse(content_type="image/png")
+      img = Image.open("/home/localuser/Datacube/NE-GeoCloud/static/assets/results/urbanization/false_color/" + z + "/" + x + "/" + y + ".png")
+      img.save(response, "PNG")
+      return response
+        # return ("ok")
+
+
 class OutputView(View):
     def post(self, request):
 
@@ -54,12 +121,38 @@ class OutputView(View):
             platform = request.POST.get('platform')
             start_date = request.POST.get('start_date')
             end_date = request.POST.get('end_date') 
+
+            print("hi")
+
+            
+            # Create your views here.
             
             cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/urbanization.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            while p.poll() is None:
-                continue
-            out, err = p.communicate()
+            cmd1 = 'rm -r /home/localuser/Datacube/NE-GeoCloud/static/assets/results/urbanization/false_color'
+            cmd2 = "gdal2tiles.py -z 3-14 /home/localuser/Datacube/NE-GeoCloud/static/assets/results/urbanization/false_color.png"
+            cmds = [cmd,cmd1,cmd2]
+
+            # p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            # while p.poll() is None:
+            #     continue
+
+            # def func(cmd):
+
+            #     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            #     # while p.poll() is None:
+            #     #     continue
+            #     # p = subprocess.Popen(cmd1, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            #     # while p.poll() is None:
+            #     #     continue
+            #     # p = subprocess.Popen(cmd2, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            #     # while p.poll() is None:
+            #     #     continue
+            print(multiprocessing.cpu_count())
+            # m = multiprocessing.Pool(multiprocessing.cpu_count())
+            # m.map(func, cmds)
+
+            # out, err = p.communicate()
+            
             image = "/static/assets/results/urbanization/false_color.png" 
             result = {"image" : image,
                         "lat_min" : lat_min,
@@ -71,6 +164,7 @@ class OutputView(View):
                         }
             response = []
             response.append(result)
+            
             # context = {
             #             'lat_min': lat_min,
             #             'lat_max': lat_max,
@@ -84,6 +178,7 @@ class OutputView(View):
             #             'err' : err
             # }
             return HttpResponse(json.dumps(response))
+            # return HttpResponse("succ")
 
         else:
             return HttpResponseBadRequest('Only POST requests are allowed')

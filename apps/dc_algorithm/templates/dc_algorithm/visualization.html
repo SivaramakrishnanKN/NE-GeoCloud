@@ -188,7 +188,7 @@
 
       map = new L.Map('map', {
         minZoom: 3,
-        maxZoom: 12,
+        maxZoom: 16,
         zoomSnap: 2,
       });
       info_map = new L.Map('info_map', {
@@ -379,6 +379,7 @@
   function activate_layer(layer) {
     layer.setStyle({
       fillColor: highlightLayer,
+      fillOpacity: 0,
       color: highlightLayer
     });
     $('#' + layer._leaflet_id).css('background-color', highlightDiv);
@@ -388,7 +389,8 @@
   function deactivate_layer(layer) {
     layer.setStyle({
       fillColor: unHighlightLayer,
-      color: unHighlightLayer
+      color: unHighlightLayer,
+      fillOpacity: 0.1
     });
     $('#' + layer._leaflet_id).css('background-color', unHighlightDiv);
   }
@@ -611,12 +613,28 @@
            cache : false,
            async: false,
            success: function(response){
-              // alert(type);
+            alert("succ");
+            alert(response);
+
+              var lyr = L.tileLayer('/urbanization/{z}/{x}/{y}', {tms: true, opacity: 1, attribution: 'map data', minZoom: 4, maxZoom: 12});
+              lyr.addTo(map);
+
+              
               data = response[0];
               imageUrl = data.image;  
               imageBounds = [[data.lat_min, data.long_min], [data.lat_max, data.long_max]];
-              L.imageOverlay(imageUrl, imageBounds).addTo(map);
-              // alert(data.out); // show response from the php script.
+            
+              // map.eachLayer(function (layer) {
+              //     map.removeLayer(layer);
+              // });
+
+              // map.addLayer(osm);
+
+              
+              // L.imageOverlay(imageUrl, imageBounds).addTo(map);
+
+              map.fitBounds(imageBounds);
+              
            },
            error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + data); 
