@@ -121,33 +121,45 @@ class OutputView(View):
             platform = request.POST.get('platform')
             start_date = request.POST.get('start_date')
             end_date = request.POST.get('end_date') 
+            index = request.POST.get('index')
 
             print("hi")
 
             
             # Create your views here.
             
-            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/urbanization.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date
+            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/urbanization.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date + ' ' + index
             cmd1 = 'rm -r /home/localuser/Datacube/NE-GeoCloud/static/assets/results/urbanization/false_color'
-            cmd2 = "gdal2tiles.py -z 3-14 /home/localuser/Datacube/NE-GeoCloud/static/assets/results/urbanization/false_color.png"
-            cmds = [cmd,cmd1,cmd2]
+            cmd2 = 'gdal2tiles.py -z 3-14 /home/localuser/Datacube/NE-GeoCloud/static/assets/results/urbanization/false_color.png'
+            cmds = [cmd,cmd1,cmd2]                                                                                                                                                                                                                                                  
 
-            # p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            # while p.poll() is None:
-            #     continue
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)                                                                   
+            while p.poll() is None:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+                continue
+            print("1")
 
+            p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            while p1.poll() is None:
+                continue
+            print("2")
+            
+            p2 = subprocess.Popen(cmd2, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, cwd=r'/home/localuser/Datacube/NE-GeoCloud/static/assets/results/urbanization')
+            while p2.poll() is None:
+                continue
+            print(cmd2)
+            print(multiprocessing.cpu_count())
             # def func(cmd):
 
             #     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             #     # while p.poll() is None:
             #     #     continue
             #     # p = subprocess.Popen(cmd1, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            #     # while p.poll() is None:
+            #     # while p.poll() is None:                                                                                                                                                                                         
             #     #     continue
             #     # p = subprocess.Popen(cmd2, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             #     # while p.poll() is None:
             #     #     continue
-            print(multiprocessing.cpu_count())
+            
             # m = multiprocessing.Pool(multiprocessing.cpu_count())
             # m.map(func, cmds)
 

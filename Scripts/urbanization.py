@@ -6,7 +6,10 @@ import utils.data_cube_utilities.data_access_api as dc_api
 import datacube  
 from utils.data_cube_utilities.dc_utilities import write_png_from_xr
 from utils.data_cube_utilities.dc_display_map import display_map
+import datetime
 
+
+start_time = datetime.datetime.now()
 
 def NDVI(dataset):
     return (dataset.nir - dataset.red)/(dataset.nir + dataset.red)
@@ -202,10 +205,23 @@ write_png_from_xr('static/assets/results/urbanization/cloud_free_mosaic.png', la
 
 # In[13]:
 
+if sys.argv[9] == "NDVI":
+    ndvi = NDVI(landsat_mosaic)  # Dense Vegetation
+    ds_ndvi = ndvi.to_dataset(name = "NDVI")
+    write_png_from_xr('static/assets/results/urbanization/false_color.png', ds_ndvi, ["NDVI", "NDVI", "NDVI"], scale = [(-1,1),(0,1),(0,1)])
 
-ndbi = NDBI(landsat_mosaic)  # Urbanization
-ndvi = NDVI(landsat_mosaic)  # Dense Vegetation
-ndwi = NDWI(landsat_mosaic)  # High Concentrations of Water
+
+elif sys.argv[9] == "NDBI":
+    ndbi = NDBI(landsat_mosaic)  # Urbanization
+    ds_ndbi = ndbi.to_dataset(name = "NDBI")
+    write_png_from_xr('static/assets/results/urbanization/false_color.png', ds_ndbi, ["NDBI", "NDBI", "NDBI"], scale = [(-1,1),(0,1),(0,1)])
+
+elif sys.argv[9] == "NDWI":
+    ndwi = NDWI(landsat_mosaic)  # High Concentrations of Water
+    ds_ndwi = ndwi.to_dataset(name=  "NDWI")
+    write_png_from_xr('static/assets/results/urbanization/false_color.png', ds_ndwi, ["NDWI", "NDWI", "NDWI"], scale = [(-1,1),(0,1),(0,1)])
+
+
 
 
 # <br>
@@ -239,9 +255,6 @@ ndwi = NDWI(landsat_mosaic)  # High Concentrations of Water
 # In[17]:
 
 
-ds_ndvi = ndvi.to_dataset(name = "NDVI")
-ds_ndwi = ndwi.to_dataset(name=  "NDWI")
-ds_ndbi = ndbi.to_dataset(name = "NDBI")
 
 
 # <br>
@@ -251,7 +264,7 @@ ds_ndbi = ndbi.to_dataset(name = "NDBI")
 # In[18]:
 
 
-urbanization_dataset = ds_ndvi.merge(ds_ndwi).merge(ds_ndbi)
+# urbanization_dataset = ds_ndvi.merge(ds_ndwi).merge(ds_ndbi)
 
 
 # <br>  
@@ -274,7 +287,6 @@ urbanization_dataset = ds_ndvi.merge(ds_ndwi).merge(ds_ndbi)
 # In[20]:
 
 
-write_png_from_xr('static/assets/results/urbanization/false_color.png', urbanization_dataset, ["NDBI", "NDVI", "NDWI"], scale = [(-1,1),(0,1),(0,1)])
 
 
 # ![](diagrams/urbanization/false_color.png)
@@ -304,5 +316,5 @@ write_png_from_xr('static/assets/results/urbanization/false_color.png', urbaniza
 
 # In[ ]:
 
-
-
+end_time = datetime.datetime.now()
+print(end_time - start_time)

@@ -49,9 +49,7 @@
   $('.dropdown-trigger').dropdown();
   $('select').formSelect();
   $('.scrollspy').scrollSpy();
-  $('.modalselector').leanModal({
-      dismissible: false
-  );
+  $('select').formSelect();
   });
 
 </script>
@@ -61,7 +59,7 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col l3" style="overflow:auto; max-height: 90vh;">
+        <div class="col l3" style="overflow:auto; max-height: 100vh;">
             <div class="col l12">
 
                 <h4 class="page-header">{{tool_name}}</h4>
@@ -73,7 +71,7 @@
                     <ul class="collapsible popout" >
                     {% for f in form %}
 
-                        <li>
+                        <li class="active">
                             <div class="collapsible-header"><i class="material-icons">map</i>Product {{forloop.counter}}</div>
                             <div class="collapsible-body">
 
@@ -82,7 +80,16 @@
                         </li>
                     {% endfor %}
                     </ul>
-                    <div class="range-field">
+                    <div class="input-field col s12 m6" >
+                      <select class="icons" id="indices">
+                        <!-- <option value="" disabled selected></option> -->
+                        <option value="NDVI" data-icon="images/sample-1.jpg">NDVI</option>
+                        <option value="NDWI" data-icon="images/office.jpg">NDWI</option>
+                        <option value="NDBI" data-icon="images/yuna.jpg">NDBI</option>
+                      </select>
+                      <label>Select Index</label>
+                    </div>
+                    <!-- <div class="range-field">
                       <label for="hyperparameter_1">Hyperparameter 1</label>
                           <input type="range" id="hyperparameter_1" min="0" max="100">
                     </div>
@@ -94,7 +101,7 @@
                       <label for="hyperparameterl_1">Hyperparameter 3</label>
                           <input type="range" id="hyperparameter_3" min="0" max="100">
                     </div>
-
+ -->
 
 
                 </form>
@@ -122,7 +129,7 @@
             </div>
     		<form method='POST' action='output/' id="form">
     		{% csrf_token %}        
-	            <div class="modal-footer">
+	            <div class="modal-footer container">
 	            	<input type="hidden" id='lat_min'  name='lat_min' />
 	            	<input type="hidden" id='lat_max'  name='lat_max' />
 	            	<input type="hidden" id='long_min' name='long_min' />
@@ -131,7 +138,12 @@
 	            	<input type="hidden" id='product'  name='product' />
 	            	<input type="hidden" id='start_date' name='start_date' />
 	            	<input type="hidden" id='end_date' name='end_date' />
-		            <button type="submit" class="btn btn-danger modal-close" id="submit" data-dismiss="modal">Submit</button>
+                <input type="hidden" id='index' name='index' />
+		            <div  id="loading">
+                </div>
+                <div>
+                  <button type="submit" class="btn btn-danger modal-close" id="submit" data-dismiss="modal">Submit</button>
+                </div>
 		        </div>
 	        </form>
         </div>
@@ -188,7 +200,7 @@
 
       map = new L.Map('map', {
         minZoom: 3,
-        maxZoom: 16,
+        maxZoom: 14,
         zoomSnap: 2,
       });
       info_map = new L.Map('info_map', {
@@ -584,27 +596,31 @@
     $("#platform").val(data['platform']);
     $("#start_date").val(data['start_date']);
     $("#end_date").val(data['end_date']);  
-
+    $("#index").val($("#indices").val());
   	}
   var form = $('#form');
 
   form.submit(function(e) {
     submitForm();
+
     e.preventDefault(); // avoid to execute the actual submit of the form.
 
     var url = form.attr('action');
+    // var index = $("#index").val();
+    // var formData = {
+    //      'lat_min' :  $("#lat_min").val(),
+    //      'lat_max' :  $("#lat_max").val(),
+    //      'long_min' :  $("#long_min").val(),
+    //       'long_max':  $("#long_max").val(),
+    //       'product':  $("#product").val(),
+    //       'platform':  $("#platform").val(),
+    //       'start_date':  $("#start_date").val(),
+    //       'end_date':  $("#end_date").val(),
+    //       'index': "NDVI"
+    //     };
 
-    var formData = {
-         'lat_min' :  $("#lat_min").val(),
-         'lat_max' :  $("#lat_max").val(),
-         'long_min' :  $("#long_min").val(),
-          'long_max':  $("#long_max").val(),
-          'product':  $("#product").val(),
-          'platform':  $("#platform").val(),
-          'start_date':  $("#start_date").val(),
-          'end_date':  $("#end_date").val()
-        };
-
+    // $('#info_modal').closeModal();
+    $('#loading').html('<div class="progress col l11 valign" id="loading"><div class="indeterminate"></div></div>');
     $.ajax({
            type: form.attr('method'),
            url: url,
@@ -613,8 +629,7 @@
            cache : false,
            async: false,
            success: function(response){
-            alert("succ");
-            alert(response);
+            
 
               var lyr = L.tileLayer('/urbanization/{z}/{x}/{y}', {tms: true, opacity: 1, attribution: 'map data', minZoom: 4, maxZoom: 12});
               lyr.addTo(map);
