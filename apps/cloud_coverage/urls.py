@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'get_ingested_data', views.GetIngestedData.as_view(),
         name='get_ingested_data'),
     url(r'^output/$', views.OutputView.as_view(), name='output'),
+    url(r'^(?P<z>[0-9]+)/(?P<x>[0-9]+)/(?P<y>[0-9]+)', views.tiling, name='tiling'),
 ]

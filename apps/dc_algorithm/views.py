@@ -51,6 +51,7 @@ class ToolClass:
     """
 
     tool_name = None
+    tool_id = None
     tool_inputs = 0
     task_model_name = None
     tool_satellites = None
@@ -87,6 +88,7 @@ class DataCubeVisualization(ToolClass, View):
 
         context = {'form': form,
                     'tool_name': self.tool_name,
+                    'tool_id': self.tool_id,
                 }
         return render(request, 'dc_algorithm/visualization.html', context)
 
