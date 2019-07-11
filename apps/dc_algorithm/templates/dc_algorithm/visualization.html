@@ -80,15 +80,18 @@
                         </li>
                     {% endfor %}
                     </ul>
+                    {% if tool_id == "urbanization"%}
                     <div class="input-field col s12 m6" >
                       <select class="icons" id="indices">
                         <!-- <option value="" disabled selected></option> -->
-                        <option value="NDVI" data-icon="images/sample-1.jpg">NDVI</option>
-                        <option value="NDWI" data-icon="images/office.jpg">NDWI</option>
-                        <option value="NDBI" data-icon="images/yuna.jpg">NDBI</option>
+                        <option value="NDVI" data-icon="/static/assets/media/ndvi.png">NDVI</option>
+                        <option value="NDWI" data-icon="/static/assets/media/ndwi.png">NDWI</option>
+                        <option value="NDBI" data-icon="/static/assets/media/ndbi.png">NDBI</option>
+                        <option value="false_color" data-icon="/static/assets/media/false_color.png">Urbanisation</option>
                       </select>
                       <label>Select Index</label>
                     </div>
+                    {% endif %}
                     <!-- <div class="range-field">
                       <label for="hyperparameter_1">Hyperparameter 1</label>
                           <input type="range" id="hyperparameter_1" min="0" max="100">
@@ -139,7 +142,9 @@
 	            	<input type="hidden" id='start_date' name='start_date' />
 	            	<input type="hidden" id='end_date' name='end_date' />
                 <input type="hidden" id='index' name='index' />
-		            <div  id="loading">
+		            <div class="progress col l11 valign" id="loading">
+                  <div class="indeterminate">                    
+                  </div>
                 </div>
                 <div>
                   <button type="submit" class="btn btn-danger modal-close" id="submit" data-dismiss="modal">Submit</button>
@@ -199,63 +204,63 @@
 
 
       map = new L.Map('map', {
-        minZoom: 3,
+        minZoom: 1,
         maxZoom: 14,
-        zoomSnap: 2,
+        zoomSnap: 1,
       });
       info_map = new L.Map('info_map', {
         zoomSnap: 0.25,
       });
-      var drawnItems = new L.FeatureGroup();
-     info_map.addLayer(drawnItems);
-     var bounds = [[7.74554387426788, -3.51367040230697], [9.6171837687319, 1.42886029092127]];
-     var drawControl = new L.Control.Draw({
-         draw: {
-             polygon: false,
-             marker: false,
-             circle: false,
-             polyline: false
-         },
-         edit: {
-             featureGroup: drawnItems
-         }
-     });
-     info_map.addControl(drawControl);
-     info_map.on('draw:created', function (e) {
+     //  var drawnItems = new L.FeatureGroup();
+     // info_map.addLayer(drawnItems);
+     // var bounds = [[7.74554387426788, -3.51367040230697], [9.6171837687319, 1.42886029092127]];
+     // var drawControl = new L.Control.Draw({
+     //     draw: {
+     //         polygon: false,
+     //         marker: false,
+     //         circle: false,
+     //         polyline: false
+     //     },
+     //     edit: {
+     //         featureGroup: drawnItems
+     //     }
+     // });
+     // info_map.addControl(drawControl);
+//      info_map.on('draw:created', function (e) {
 
     
-    var type = e.layerType,
-        layer = e.layer;
+//     var type = e.layerType,
+//         layer = e.layer;
 
-    if (type === 'rectangle') {
-        layer.on('mouseover', function() {
-            var coordinates = layer.getLatLngs();
-            var numbers = /[+-]?\d+(?:\.\d+)?/g;
-            var coords_arr = [];
-            var i=0;
-            while (i<8) {
-                  coords_arr[i]=numbers.exec(coordinates);
-                  i++;
-                }
+//     if (type === 'rectangle') {
+//         layer.on('mouseover', function() {
+//             var coordinates = layer.getLatLngs();
+//             var numbers = /[+-]?\d+(?:\.\d+)?/g;
+//             var coords_arr = [];
+//             var i=0;
+//             while (i<8) {
+//                   coords_arr[i]=numbers.exec(coordinates);
+//                   i++;
+//                 }
 
-            if((coords_arr[0]<ingestion_data[key][0]['latitude_min'])||(coords_arr[1]<ingestion_data[key][0]['longitude_min'])||(coords_arr[2]>ingestion_data[key][0]['latitude_max'])||(coords_arr[5]>ingestion_data[key][0]['longitude_max'])){
-              alert("Please limit within the ingested area which is highlighted as the red one.");
-              info_map.removeLayer(layer);
-            }
+//             if((coords_arr[0]<ingestion_data[key][0]['latitude_min'])||(coords_arr[1]<ingestion_data[key][0]['longitude_min'])||(coords_arr[2]>ingestion_data[key][0]['latitude_max'])||(coords_arr[5]>ingestion_data[key][0]['longitude_max'])){
+//               alert("Please limit within the ingested area which is highlighted as the red one.");
+//               info_map.removeLayer(layer);
+//             }
 
-            obj['lat_min'] = coords_arr[0];
-            obj['long_min'] = coords_arr[1];
-            obj['lat_max'] = coords_arr[2];
-            obj['long_max'] = coords_arr[5];
-
-
-        });
-    }
+//             obj['lat_min'] = coords_arr[0];
+//             obj['long_min'] = coords_arr[1];
+//             obj['lat_max'] = coords_arr[2];
+//             obj['long_max'] = coords_arr[5];
 
 
-    drawnItems.addLayer(layer);
+//         });
+//     }
 
-});
+
+//     drawnItems.addLayer(layer);
+
+// });
 
 
 
@@ -272,7 +277,21 @@
         [-60, -180],
         [85, 180]
       ]);
+      var rectangle = L.rectangle([
+      [91.59504758135645, 26.0458036530795],
+      [91.59504758135645, 26.191008603233865],
+      [91.922408007187, 26.191008603233865],
+      [91.922408007187, 26.0458036530795]
+    ], {
+      color: unHighlightLayer
+    });
 
+
+
+
+
+    // Add rectangle to map in the modal popup.
+    rectangle.addTo(map);
       load_ingested_areas();
       initialize_map_listeners();
       // imageUrl = "{% static 'assets/results/urbanization/false_color.png' %}";
@@ -281,7 +300,27 @@
 
   });
 
+  function rekt(){
 
+    var rectangle = L.rectangle([
+      [26.0458036530795, 91.59504758135645],
+      [26.191008603233865, 91.59504758135645],
+      [26.191008603233865, 91.922408007187],
+      [26.0458036530795, 91.922408007187]
+    ], {
+      color: unHighlightLayer
+    });
+
+
+
+
+
+    // Add rectangle to map in the modal popup.
+    rectangle.addTo(map);
+    rectangle.addTo(info_map);
+
+
+  }
 
   function update_shown_cubes(i) {
 
@@ -317,6 +356,7 @@
           endInputYear > Date.parse(layerIdDateRange[id][1]))
     }
 
+
     switch(platform_input) {
       case "All":
         for (key in ingestion_data) {
@@ -326,6 +366,10 @@
             }
           }
         }
+      break;
+      case "Sentinel":
+        rekt();
+
       break;
       default:
         for (layerId in ingestedAreaLayerGroups[platform_input]._layers) {
@@ -440,6 +484,7 @@
   // Display the modal equivalent with data for the DIV.
 
   function displayModal(id, key, index) {
+    $('#loading').hide();
     var query_string = jQuery.param(ingestion_data[key][index]);
     obj['platform'] = key
     obj['product'] = ingestion_data[key][index]['product']
@@ -507,6 +552,52 @@
 
         // Add rectangle to map in the modal popup.
         rectangle.addTo(info_map);
+        var drawnItems = new L.FeatureGroup();
+     info_map.addLayer(drawnItems);
+     var bounds = [[7.74554387426788, -3.51367040230697], [9.6171837687319, 1.42886029092127]];
+     var drawControl = new L.Control.Draw({
+         draw: {
+             polygon: false,
+             marker: false,
+             circle: false,
+             polyline: false
+         },
+         edit: {
+             featureGroup: drawnItems
+         }
+     });
+     info_map.addControl(drawControl);
+        info_map.on('draw:created', function (e) {
+    
+        var type = e.layerType,
+            layer = e.layer;
+
+        if (type === 'rectangle') {
+            layer.on('mouseover', function() {
+                var coordinates = layer.getLatLngs();
+                var numbers = /[+-]?\d+(?:\.\d+)?/g;
+                var coords_arr = [];
+                var i=0;
+                while (i<8) {
+                      coords_arr[i]=numbers.exec(coordinates);
+                      i++;
+                    }
+
+                if((coords_arr[0]<ingestion_data[key][index]['latitude_min'])||(coords_arr[1]<ingestion_data[key][index]['longitude_min'])||(coords_arr[2]>ingestion_data[key][index]['latitude_max'])||(coords_arr[5]>ingestion_data[key][index]['longitude_max'])){
+                  alert("Please limit within the ingested area which is highlighted as the red one.");
+                  info_map.removeLayer(layer);
+                }
+
+                obj['lat_min'] = coords_arr[0];
+                obj['long_min'] = coords_arr[1];
+                obj['lat_max'] = coords_arr[2];
+                obj['long_max'] = coords_arr[5];
+
+            });
+        }
+
+        drawnItems.addLayer(layer);
+      });
 
     }, 250);
 
@@ -620,7 +711,8 @@
     //     };
 
     // $('#info_modal').closeModal();
-    $('#loading').html('<div class="progress col l11 valign" id="loading"><div class="indeterminate"></div></div>');
+    $('#loading').show();
+    // alert($("#indices").val());
     $.ajax({
            type: form.attr('method'),
            url: url,
@@ -630,15 +722,24 @@
            async: false,
            success: function(response){
             
-
-              var lyr = L.tileLayer('/urbanization/{z}/{x}/{y}', {tms: true, opacity: 1, attribution: 'map data', minZoom: 4, maxZoom: 12});
-              lyr.addTo(map);
-
-              
-              data = response[0];
-              imageUrl = data.image;  
-              imageBounds = [[data.lat_min, data.long_min], [data.lat_max, data.long_max]];
+            tool = "{{ tool_id }}";
+            // alert(tool)
             
+            data = response[0];
+            imageUrl = data.image;  
+            
+            imageBounds = [[data.lat_min, data.long_min], [data.lat_max, data.long_max]];
+            
+            if (tool == "fractional_cover") {
+              imageBounds = [[26.0458036530795, 91.59504758135645], [26.191008603233865, 91.922408007187]];
+              L.imageOverlay(imageUrl, imageBounds).addTo(map);
+              map.fitBounds(imageBounds);
+            }
+            else {
+              var lyr = L.tileLayer('/{{ tool_id }}/{z}/{x}/{y}', {tms: true, opacity: 1, attribution: 'map data', minZoom: 4, maxZoom: 14});
+              lyr.addTo(map);
+              map.fitBounds(imageBounds);
+            }
               // map.eachLayer(function (layer) {
               //     map.removeLayer(layer);
               // });

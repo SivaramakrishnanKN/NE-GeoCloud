@@ -40,7 +40,8 @@ class DataCubeVisualization(DataCubeVisualization):
     """
     Create a Visualizer which shows all ingested data
     """
-    tool_name = 'Urbanization'
+    tool_name = 'Band Math Algorithms'
+    tool_id = 'urbanization'
     tool_inputs = 1
     tool_satellites = ['All', 'LANDSAT_5', 'LANDSAT_7', 'LANDSAT_8']
     tool_parameters = []
@@ -128,7 +129,7 @@ class OutputView(View):
             
             # Create your views here.
             
-            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/urbanization.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date + ' ' + index
+            cmd = 'python /home/localuser/Datacube/NE-GeoCloud/Scripts/band_math_algorithms.py ' + lat_min + ' ' + lat_max + ' ' + long_min + ' ' + long_max + ' ' + product + ' ' + platform + ' ' + start_date + ' ' + end_date + ' ' + index
             cmd1 = 'rm -r /home/localuser/Datacube/NE-GeoCloud/static/assets/results/urbanization/false_color'
             cmd2 = 'gdal2tiles.py -z 3-14 /home/localuser/Datacube/NE-GeoCloud/static/assets/results/urbanization/false_color.png'
             cmds = [cmd,cmd1,cmd2]                                                                                                                                                                                                                                                  
@@ -136,7 +137,8 @@ class OutputView(View):
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)                                                                   
             while p.poll() is None:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
                 continue
-            print("1")
+            out, err = p.communicate()
+            print(out + err)
 
             p1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             while p1.poll() is None:
@@ -148,6 +150,7 @@ class OutputView(View):
                 continue
             print(cmd2)
             print(multiprocessing.cpu_count())
+            # _ = input("wait")
             # def func(cmd):
 
             #     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
